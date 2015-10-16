@@ -51,6 +51,7 @@ class Node(Blok):
     def __call__(self, blok):
         '''Adds a nested blok to this blok'''
         self.blox.append(blok)
+        return blok
 
     def __iter__(self):
         return self.blox.__iter__()
