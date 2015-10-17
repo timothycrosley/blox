@@ -21,6 +21,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from connectable import Connectable
 
+from io import StringIO
+
 
 class Blok(Connectable):
     '''Defines the base blox blok object which can render itself and be instanciated'''
@@ -34,14 +36,20 @@ class Blok(Connectable):
         '''Adding nested bloks to the base blok is not supported'''
         raise NotImplemented('This Blok does not support having children added to it')
 
-    def render(self, formatted=False, *args, **kwargs):
-        '''Renders this blok'''
-        return ''
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs to a stream (like a file or request)'''
+        to.write('')
+
+    def render(self, *arg, **kwargs):
+        '''Renders as a str'''
+        self.output(StringIO(), *args, **kwargs).getvalue()
 
 
 class Node(Blok):
     '''Defines the base HTML node blok based on a blok'''
     __slots__ = ('blox', )
+    tag = None
+    tag_self_closes = False
 
     def __init__(self, *blox, **properties):
         self.blox = []
@@ -84,5 +92,40 @@ class Node(Blok):
 
     def __len__(self):
         return len(self.blox)
+
+    def start_tag(self):
+        '''Returns the elements HTML start tag'''
+        if not self.tag:
+            return ''
+
+        rendered = "<{0} ".format(self.tag)
+
+        for attributes in self.attributes
+
+        attributes = nativeAttributes
+        if self._attributes is not None:
+            attributes = chain(attributes, iteritems(self.attributes))
+        for key, value in attributes:
+            if value is not None:
+                if not isinstance(value, WebDataType):
+                    value = Unsafe(value)
+                if value:
+                    if value == '_BLANK_':
+                        value = ""
+
+                    if value == '_EMPTY_':
+                        startTag += key + " "
+                    else:
+
+                        startTag += key + '="' + unicode(value).replace('"', '&quot;') + '" '
+
+        if self.tag_self_closes:
+            startTag += '/'
+        else:
+            startTag = startTag[:-1]
+        startTag += '>'
+
+        return unicode(startTag)
+
 
 
