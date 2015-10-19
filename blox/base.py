@@ -28,14 +28,6 @@ class Blok(Connectable):
     '''Defines the base blox blok object which can render itself and be instanciated'''
     __slots__ = ()
 
-    def __init__(self, *blox, **properties):
-        for blok in blox:
-            self(blok)
-
-    def __call__(self, blok):
-        '''Adding nested bloks to the base blok is not supported'''
-        raise NotImplemented('This Blok does not support having children added to it')
-
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
         to.write('')
@@ -68,16 +60,14 @@ class Text(Blok):
         to.write(self._value)
 
 
-class Node(Blok):
-    '''Defines the base HTML node blok based on a blok'''
+class Blox(Blok):
+    '''A Block that can contain child blocks'''
     __slots__ = ('blox', )
-    tag = None
-    tag_self_closes = False
 
-    def __init__(self, *blox, **properties):
+    def __init__(self, *blox):
         self.blox = []
-        self.attributes = {}
-        super().__init__(*blox, **properties)
+        for blok in blox:
+            self(blok)
 
     def __call__(self, blok):
         '''Adds a nested blok to this blok'''
@@ -116,6 +106,18 @@ class Node(Blok):
     def __len__(self):
         return len(self.blox)
 
+
+class Tag(Blok):
+    '''A Blok that renders a single tag'''
+    __slots__ = ('properties', )
+    tag = "tag"
+    tag_self_closes = True
+
+    def __init__(self, **properties):
+        self.properties = {}
+        self.properties.update(properties)
+
+
     def start_tag(self):
         '''Returns the elements HTML start tag'''
         if not self.tag:
@@ -149,6 +151,19 @@ class Node(Blok):
         startTag += '>'
 
         return unicode(startTag)
+
+
+class TagWithChildren(Tag, Blox):
+    '''Defines a tag that can contain children'''
+    __slots__ = ('', )
+    tag = None
+    tag_self_closes = False
+
+    def __init__(self, *blox, **properties):
+        super().__init__()
+        for blok in blox:
+            self(blok)
+        self.properties.update(properties)
 
 
 
