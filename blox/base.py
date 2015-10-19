@@ -45,6 +45,29 @@ class Blok(Connectable):
         self.output(StringIO(), *args, **kwargs).getvalue()
 
 
+class Text(Blok):
+    '''Defines the most basic text block'''
+    __slots__ = ('_value', )
+    signals = ('value_changed', )
+
+    def __init__(self, value=''):
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def setValue(self, value):
+        if value != self._value:
+            self.emit('value_changed', value)
+            self._value = value
+
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs the set text'''
+        to.write(self._value)
+
+
 class Node(Blok):
     '''Defines the base HTML node blok based on a blok'''
     __slots__ = ('blox', )
