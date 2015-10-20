@@ -117,7 +117,6 @@ class Tag(Blok):
         self.properties = {}
         self.properties.update(properties)
 
-
     def start_tag(self):
         '''Returns the elements HTML start tag'''
         if not self.tag:
@@ -125,7 +124,8 @@ class Tag(Blok):
 
         rendered = "<{0} ".format(self.tag)
 
-        for attributes in self.attributes
+        rendered += " ".join(("{0}={1}".format(key, value) for key, value in self.attributes if value))
+        
 
         attributes = nativeAttributes
         if self._attributes is not None:
@@ -151,6 +151,13 @@ class Tag(Blok):
         startTag += '>'
 
         return unicode(startTag)
+
+    def end_tag(self):
+        '''Reterns the elements HTML end tag'''
+        if self.tag_self_closes:
+            return ''
+
+        return "<{0} />".format(self.tag)
 
 
 class TagWithChildren(Tag, Blox):
