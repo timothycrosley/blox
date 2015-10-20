@@ -106,64 +106,51 @@ class Blox(Blok):
     def __len__(self):
         return len(self.blox)
 
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs to a stream (like a file or request)'''
+        for blok in self.blox:
+            to.output(blok)
+
 
 class Tag(Blok):
     '''A Blok that renders a single tag'''
     __slots__ = ('properties', )
-    tag = "tag"
+    tag = ""
     tag_self_closes = True
 
     def __init__(self, **properties):
         self.properties = {}
         self.properties.update(properties)
 
+    @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
         if not self.tag:
             return ''
 
-        rendered = "<{0} ".format(self.tag)
+        properties = " ".join(("{0}={1}".format(key, value) for key, value in self.properties if value))
+        return = "<{0}{1}{2}{3}>".format(self.tag, " " if properties else "", properties),
+                                         "/" if self.tag_self_closes else "")
 
-        rendered += " ".join(("{0}={1}".format(key, value) for key, value in self.attributes if value))
-        
-
-        attributes = nativeAttributes
-        if self._attributes is not None:
-            attributes = chain(attributes, iteritems(self.attributes))
-        for key, value in attributes:
-            if value is not None:
-                if not isinstance(value, WebDataType):
-                    value = Unsafe(value)
-                if value:
-                    if value == '_BLANK_':
-                        value = ""
-
-                    if value == '_EMPTY_':
-                        startTag += key + " "
-                    else:
-
-                        startTag += key + '="' + unicode(value).replace('"', '&quot;') + '" '
-
-        if self.tag_self_closes:
-            startTag += '/'
-        else:
-            startTag = startTag[:-1]
-        startTag += '>'
-
-        return unicode(startTag)
-
+    @property
     def end_tag(self):
-        '''Reterns the elements HTML end tag'''
+        '''Returns the elements HTML end tag'''
         if self.tag_self_closes:
             return ''
 
         return "<{0} />".format(self.tag)
 
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs to a stream (like a file or request)'''
+        to.write(self.start_tag)
+        if not self.tag_self_closes:
+            to.write(self.end_tag)
+
 
 class TagWithChildren(Tag, Blox):
     '''Defines a tag that can contain children'''
     __slots__ = ('', )
-    tag = None
+    tag = ""
     tag_self_closes = False
 
     def __init__(self, *blox, **properties):
@@ -172,5 +159,10 @@ class TagWithChildren(Tag, Blox):
             self(blok)
         self.properties.update(properties)
 
-
-
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs to a stream (like a file or request)'''
+        to.write(self.start_tag)
+        if not self.tag_self_closes:
+            for blok in self.blox:
+                to.output(blok)
+            to.write(self.end_tag)
