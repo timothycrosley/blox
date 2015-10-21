@@ -151,8 +151,11 @@ class AbstractTag(Blok):
         if not self.tag_self_closes:
             to.write(self.end_tag)
 
+
 class Tag(AbstractTag):
+     '''A Blok that renders a single tag'''
     __slots__ = ('properties', )
+
 
 class TagWithChildren(Blox, AbstractTag):
     '''Defines a tag that can contain children'''
