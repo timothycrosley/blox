@@ -25,15 +25,12 @@ from blox.base import Invalid
 
 class Factory(object):
     '''Defines a Blok factory that can be used to build new Blox based on only the name and attributes of the Blok'''
-    name = ""
-    default = Invalid
+    __slots__ = ('name', 'default', 'products')
 
-    def __init__(self, name=None, default=None):
+    def __init__(self, name="", default=Invalid):
         self.products = {}
-        if name:
-            self.name = name
-        if default:
-            default = default
+        self.name = name
+        self.default = default
 
     def add(self, name=None):
         '''Returns back a class decorator that enables registering Blox to this factory'''

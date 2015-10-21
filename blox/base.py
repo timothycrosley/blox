@@ -43,7 +43,7 @@ class Invalid(Blok):
     '''Defines how the lack of a vaild Blok should be rendered'''
     __slots__ = ()
 
-    def output(self, to=None, **args, **kwargs):
+    def output(self, to=None, *args, **kwargs):
         to.write('<h2>Invalid</h2>')
 
 
@@ -161,7 +161,7 @@ class AbstractTag(Blok):
 
 
 class Tag(AbstractTag):
-     '''A Blok that renders a single tag'''
+    '''A Blok that renders a single tag'''
     __slots__ = ('properties', )
 
 
