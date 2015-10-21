@@ -39,6 +39,14 @@ class Blok(Connectable):
         return render_to.getvalue()
 
 
+class Invalid(Blok):
+    '''Defines how the lack of a vaild Blok should be rendered'''
+    __slots__ = ()
+
+    def output(self, to=None, **args, **kwargs):
+        to.write('<h2>Invalid</h2>')
+
+
 class Text(Blok):
     '''Defines the most basic text block'''
     __slots__ = ('_value', )
