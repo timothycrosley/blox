@@ -32,9 +32,11 @@ class Blok(Connectable):
         '''Outputs to a stream (like a file or request)'''
         to.write('')
 
-    def render(self, *arg, **kwargs):
+    def render(self, *args, **kwargs):
         '''Renders as a str'''
-        self.output(StringIO(), *args, **kwargs).getvalue()
+        render_to = StringIO()
+        self.output(render_to, *args, **kwargs)
+        return render_to.getvalue()
 
 
 class Text(Blok):
@@ -43,6 +45,7 @@ class Text(Blok):
     signals = ('value_changed', )
 
     def __init__(self, value=''):
+        super().__init__()
         self._value = value
 
     @property
@@ -65,6 +68,7 @@ class Blox(Blok):
     __slots__ = ('blox', )
 
     def __init__(self, *blox):
+        super().__init__()
         self.blox = []
         for blok in blox:
             self(blok)
@@ -109,16 +113,17 @@ class Blox(Blok):
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
         for blok in self.blox:
-            to.output(blok)
+            blok.output(to=to, *args, **kwargs)
 
 
-class Tag(Blok):
+class AbstractTag(Blok):
     '''A Blok that renders a single tag'''
-    __slots__ = ('properties', )
+    __slots__ = ()
     tag = ""
     tag_self_closes = True
 
     def __init__(self, **properties):
+        super().__init__()
         self.properties = {}
         self.properties.update(properties)
 
@@ -128,8 +133,8 @@ class Tag(Blok):
         if not self.tag:
             return ''
 
-        properties = " ".join(("{0}={1}".format(key, value) for key, value in self.properties if value))
-        return = "<{0}{1}{2}{3}>".format(self.tag, " " if properties else "", properties),
+        properties = " ".join(('{0}="{1}"'.format(key, value) for key, value in self.properties.items() if value))
+        return "<{0}{1}{2}{3}>".format(self.tag, " " if properties else "", properties,
                                          "/" if self.tag_self_closes else "")
 
     @property
@@ -138,7 +143,7 @@ class Tag(Blok):
         if self.tag_self_closes:
             return ''
 
-        return "<{0} />".format(self.tag)
+        return "</{0}>".format(self.tag)
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
@@ -146,10 +151,12 @@ class Tag(Blok):
         if not self.tag_self_closes:
             to.write(self.end_tag)
 
+class Tag(AbstractTag):
+    __slots__ = ('properties', )
 
-class TagWithChildren(Tag, Blox):
+class TagWithChildren(Blox, AbstractTag):
     '''Defines a tag that can contain children'''
-    __slots__ = ('', )
+    __slots__ = ('properties', )
     tag = ""
     tag_self_closes = False
 
@@ -164,5 +171,5 @@ class TagWithChildren(Tag, Blox):
         to.write(self.start_tag)
         if not self.tag_self_closes:
             for blok in self.blox:
-                to.output(blok)
+                blok.output(to=to, *args, **kwargs)
             to.write(self.end_tag)
