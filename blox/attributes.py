@@ -22,15 +22,18 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 class Attribute(object):
     '''Defines the most basic Blok attribute object'''
-    __slots__ = ('name', )
+    __slots__ = ('name', 'signal', )
 
-    def __init__(self, name):
+    def __init__(self, name, signal=False):
         self.name = name
+        self.signal = signal
 
     def __get__(self, obj, cls):
         return obj.attributes[self.name]
 
     def __set__(self, obj, value):
+        if self.signal and not self.name in attributes or obj.attributes[self.name] != value:
+            obj.emit(self.signal, value)
         obj.attributes[self.name] = value
 
      def __delete__(self, obj):
@@ -41,8 +44,8 @@ class AttributeTransform(object):
     '''Defines the base Blok attribute object'''
     __slots__ = ('to_python', 'to_html')
 
-    def __init__(self, name, to_python=None, to_html=star):
-        super().__init__(name)
+    def __init__(self, name, signal=None, to_python=None, to_html=star):
+        super().__init__(name, signal)
         self.to_python = to_python
         self.to_html = to_html
 
