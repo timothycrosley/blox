@@ -1,6 +1,6 @@
-'''blox/Factory.py
+'''blox/builder.py
 
-The Node Factory provides a mechanism for building any element the factory has knowledge of
+The Node Building Factory provides a mechanism for building any element the factory has knowledge of
 simply by defining their names (as a string) and their main attributes.
 
 Copyright (C) 2015  Timothy Edmund Crosley
