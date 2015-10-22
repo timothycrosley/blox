@@ -130,10 +130,10 @@ class AbstractTag(Blok):
     tag = ""
     tag_self_closes = True
 
-    def __init__(self, **properties):
+    def __init__(self, **attributes):
         super().__init__()
-        self.properties = {}
-        self.properties.update(properties)
+        self.attributes = {}
+        self.attributes.update(attributes)
 
     @property
     def start_tag(self):
@@ -141,8 +141,8 @@ class AbstractTag(Blok):
         if not self.tag:
             return ''
 
-        properties = " ".join(('{0}="{1}"'.format(key, value) for key, value in self.properties.items() if value))
-        return "<{0}{1}{2}{3}>".format(self.tag, " " if properties else "", properties,
+        attributes = " ".join(('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value))
+        return "<{0}{1}{2}{3}>".format(self.tag, " " if attributes else "", attributes,
                                          "/" if self.tag_self_closes else "")
 
     @property
@@ -162,20 +162,20 @@ class AbstractTag(Blok):
 
 class Tag(AbstractTag):
     '''A Blok that renders a single tag'''
-    __slots__ = ('properties', )
+    __slots__ = ('attributes', )
 
 
 class TagWithChildren(Blox, AbstractTag):
     '''Defines a tag that can contain children'''
-    __slots__ = ('properties', )
+    __slots__ = ('attributes', )
     tag = ""
     tag_self_closes = False
 
-    def __init__(self, *blox, **properties):
+    def __init__(self, *blox, **attributes):
         super().__init__()
         for blok in blox:
             self(blok)
-        self.properties.update(properties)
+        self.attributes.update(attributes)
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
