@@ -20,6 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 from connectable import Connectable
+from blox.attributes import Attribute
 
 from io import StringIO
 
@@ -124,7 +125,16 @@ class Blox(Blok):
             blok.output(to=to, *args, **kwargs)
 
 
-class AbstractTag(Blok):
+class TagAttributes(type):
+    '''A meta class to automatically register signals for tag attributes'''
+
+    def __new__(cls, name, parents, dct):
+        cls.signals += tuple(attribute.signal for attribute in dir(cls) if
+                             isinstance(attribute, Attribute) and attribute.signal)
+        return super(TagAttributes, cls).__new__(cls, name, parents, dct)
+
+
+class AbstractTag(Blok, metaclass=TagAttributes):
     '''A Blok that renders a single tag'''
     __slots__ = ()
     tag = ""
