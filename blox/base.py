@@ -19,10 +19,14 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
+import re
+
 from connectable import Connectable
 from blox.attributes import Attribute
 
 from io import StringIO
+
+UNDERSCORE = (re.compile('(.)([A-Z][a-z]+)'), re.compile('([a-z0-9])([A-Z])'))
 
 
 class Blok(Connectable):
@@ -131,13 +135,18 @@ class TagAttributes(type):
     def __new__(cls, name, parents, dct):
         cls.signals += tuple(attribute.signal for attribute in dir(cls) if
                              isinstance(attribute, Attribute) and attribute.signal)
+        if not cls.tag:
+            cls._tag =  UNDERSCORE[1].sub(r'\1_\2', UNDERSCORE[0].sub(r'\1_\2', cls.__name__)).lower()
+        else:
+            cls._tag = cls.tag
+
         return super(TagAttributes, cls).__new__(cls, name, parents, dct)
 
 
 class AbstractTag(Blok, metaclass=TagAttributes):
     '''A Blok that renders a single tag'''
     __slots__ = ()
-    tag = ""
+    tag = None
     tag_self_closes = True
 
     def __init__(self, **attributes):
@@ -148,11 +157,8 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
-        if not self.tag:
-            return ''
-
         attributes = " ".join(('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value))
-        return "<{0}{1}{2}{3}>".format(self.tag, " " if attributes else "", attributes,
+        return "<{0}{1}{2}{3}>".format(self._tag, " " if attributes else "", attributes,
                                          "/" if self.tag_self_closes else "")
 
     @property
@@ -161,7 +167,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
         if self.tag_self_closes:
             return ''
 
-        return "</{0}>".format(self.tag)
+        return "</{0}>".format(self._tag)
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
