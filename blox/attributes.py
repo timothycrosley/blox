@@ -41,7 +41,7 @@ class Attribute(object):
 
 
 class AttributeTransform(object):
-    '''Defines the base Blok attribute object'''
+    '''Defines an attribute that transforms values for Python and HTML use'''
     __slots__ = ('to_python', 'to_html')
 
     def __init__(self, name, signal=None, to_python=None, to_html=star):
@@ -55,3 +55,4 @@ class AttributeTransform(object):
 
     def __set__(self, obj, value):
         super().__set__(obj, self.to_html(value) if self.to_html else value)
+
