@@ -1,1 +1,1 @@
-connectable==1.1.0
+connectable==1.2.0
