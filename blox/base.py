@@ -132,26 +132,34 @@ class Blox(Blok):
 class TagAttributes(type):
     '''A meta class to automatically register signals for tag attributes'''
 
-    def __new__(cls, name, parents, dct):
-        cls.signals += tuple(attribute.signal for attribute in dir(cls) if
-                             isinstance(attribute, Attribute) and attribute.signal)
-        if not cls.tag:
-            cls._tag =  UNDERSCORE[1].sub(r'\1_\2', UNDERSCORE[0].sub(r'\1_\2', cls.__name__)).lower()
-        else:
-            cls._tag = cls.tag
+    def __new__(metaclass, name, parents, class_dict, *kargs, **kwargs):
+        '''Updates a tag class to automatically register all signals'''
+        attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute, Attribute)}
+        if attributes:
+            for parent in parents:
+                if getattr(parent, 'attributes'):
+                    full_attributes = parent.attributes.copy()
+                    full_attributes.update(attributes)
+                    attributes = full_attributes
+                    break
 
-        return super(TagAttributes, cls).__new__(cls, name, parents, dct)
+
+            class_dict['attributes'] = attributes
+            attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
+            if attribute_signals:
+                class_dict['signals'] = class_dict.get('signals', ()) + tuple(attribute_signals)
+
+        return super(TagAttributes, metaclass).__new__(metaclass, name, parents, class_dict, *kargs, **kwargs)
 
 
 class AbstractTag(Blok, metaclass=TagAttributes):
     '''A Blok that renders a single tag'''
     __slots__ = ()
-    tag = None
     tag_self_closes = True
+    tag = ""
 
     def __init__(self, **attributes):
         super().__init__()
-        self.attributes = {}
         self.attributes.update(attributes)
 
     @property

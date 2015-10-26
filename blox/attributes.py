@@ -36,15 +36,15 @@ class Attribute(object):
             obj.emit(self.signal, value)
         obj.attributes[self.name] = value
 
-     def __delete__(self, obj):
-         obj.attributes.pop(self.name, None)
+    def __delete__(self, obj):
+        obj.attributes.pop(self.name, None)
 
 
 class AttributeTransform(object):
     '''Defines an attribute that transforms values for Python and HTML use'''
     __slots__ = ('to_python', 'to_html')
 
-    def __init__(self, name, signal=None, to_python=None, to_html=star):
+    def __init__(self, name, signal=None, to_python=None, to_html=str):
         super().__init__(name, signal)
         self.to_python = to_python
         self.to_html = to_html
