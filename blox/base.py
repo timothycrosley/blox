@@ -136,13 +136,10 @@ class TagAttributes(type):
         '''Updates a tag class to automatically register all signals'''
         attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute, Attribute)}
         if attributes:
-            for parent in parents:
-                if getattr(parent, 'attributes'):
-                    full_attributes = parent.attributes.copy()
-                    full_attributes.update(attributes)
-                    attributes = full_attributes
-                    break
-
+            if getattr(parents[0], 'attributes')
+                full_attributes = parents[0].attributes.copy()
+                full_attributes.update(attributes)
+                attributes = full_attributes
 
             class_dict['attributes'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
