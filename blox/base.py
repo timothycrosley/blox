@@ -143,10 +143,16 @@ class TagAttributes(type):
         attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute, Attribute)}
         if attributes:
             if getattr(parents[0], 'attribute_descriptors'):
-                full_attributes = parents[0].attributes.copy()
+                full_attributes = parents[0].attribute_descriptors.copy()
                 full_attributes.update(attributes)
                 attributes = full_attributes
 
+            render_attributes = [attribute for attribute in attributes if hasattr(attribute, 'render')]
+            if render_attributes:
+                if getattr(parents[0], 'render_attributes'):
+                    render_attributes = parents[0].render_attributes + render_attributes
+                class_dict['render_attributes'] = render_attributes
+            
             class_dict['attribute_descriptors'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
             if attribute_signals:
