@@ -31,12 +31,6 @@ class AbstractAttribute(object):
     def from_string(obj, value):
         return value
 
-    def to_python(obj, value):
-        return value
-
-    def to_string(obj, value):
-        return value
-
 
 class DirectAttribute(Attribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
@@ -52,6 +46,9 @@ class DirectAttribute(Attribute):
             setattr(obj, self.object_attribute, self.type())
 
         return getattr(obj, self.object_attribute)
+
+    def from_string(obj, value):
+        return self.type(value)
 
     def __set__(self, obj, value):
         return setattr(obj, self.object_attribute, value)
@@ -95,3 +92,5 @@ class AttributeTransform(object):
     def __set__(self, obj, value):
         super().__set__(obj, self.to_html(value) if self.to_html else value)
 
+    def from_string(self, value):
+        return self.to_python(value)
