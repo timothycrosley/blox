@@ -78,6 +78,7 @@ class Attribute(AbstractAttribute):
     def __delete__(self, obj):
         obj.attributes.pop(self.name, None)
 
+
 class AttributeTransform(object):
     '''Defines an attribute that transforms values for Python and HTML use'''
     __slots__ = ('to_python', 'to_html')

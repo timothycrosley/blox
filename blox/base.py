@@ -152,7 +152,7 @@ class TagAttributes(type):
                 if getattr(parents[0], 'render_attributes'):
                     render_attributes = parents[0].render_attributes + render_attributes
                 class_dict['render_attributes'] = render_attributes
-            
+
             class_dict['attribute_descriptors'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
             if attribute_signals:
@@ -184,7 +184,9 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
-        attributes = " ".join(('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value))
+        attributes = " ".join(filter(attribute.render() for attribute in self.render_attributes, bool))
+        attributes += " ".join('{0}="{1}"'.format(key, value) for key, value in self.attribute_descriptors.items() if
+                               value)
         return "<{0}{1}{2}{3}>".format(self.tag, " " if attributes else "", attributes,
                                          "/" if self.tag_self_closes else "")
 
