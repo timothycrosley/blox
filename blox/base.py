@@ -66,7 +66,7 @@ class Text(Blok):
         return self._value
 
     @value.setter
-    def setValue(self, value):
+    def set_value(self, value):
         if value != self._value:
             self.emit('value_changed', value)
             self._value = value
@@ -78,13 +78,19 @@ class Text(Blok):
 
 class Blox(Blok):
     '''A Block that can contain child blocks'''
-    __slots__ = ('blox', )
+    __slots__ = ('_blox', )
 
     def __init__(self, *blox):
         super().__init__()
-        self.blox = []
         for blok in blox:
             self(blok)
+
+    @property
+    def blox(self):
+        '''Lazily creates and returns the list of child blox'''
+        if not hasattr(self, '_blox'):
+            self._blox = []
+        return self._blox
 
     def __call__(self, blok):
         '''Adds a nested blok to this blok'''
@@ -136,12 +142,12 @@ class TagAttributes(type):
         '''Updates a tag class to automatically register all signals'''
         attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute, Attribute)}
         if attributes:
-            if getattr(parents[0], 'attributes')
+            if getattr(parents[0], 'attribute_descriptors'):
                 full_attributes = parents[0].attributes.copy()
                 full_attributes.update(attributes)
                 attributes = full_attributes
 
-            class_dict['attributes'] = attributes
+            class_dict['attribute_descriptors'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
             if attribute_signals:
                 class_dict['signals'] = class_dict.get('signals', ()) + tuple(attribute_signals)
@@ -157,13 +163,23 @@ class AbstractTag(Blok, metaclass=TagAttributes):
 
     def __init__(self, **attributes):
         super().__init__()
-        self.attributes.update(attributes)
+        for name, value in attributes.items():
+            setattr(self, name, value)
+
+    @property
+    def attributes(self):
+        '''Lazily creates and returns a tags attributes'''
+        if not hasattr(self, '_attributes'):
+            self._attributes = {}
+
+        return self._attributes
+
 
     @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
         attributes = " ".join(('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value))
-        return "<{0}{1}{2}{3}>".format(self._tag, " " if attributes else "", attributes,
+        return "<{0}{1}{2}{3}>".format(self.tag, " " if attributes else "", attributes,
                                          "/" if self.tag_self_closes else "")
 
     @property
@@ -172,7 +188,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
         if self.tag_self_closes:
             return ''
 
-        return "</{0}>".format(self._tag)
+        return "</{0}>".format(self.tag)
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
@@ -183,12 +199,12 @@ class AbstractTag(Blok, metaclass=TagAttributes):
 
 class Tag(AbstractTag):
     '''A Blok that renders a single tag'''
-    __slots__ = ('attributes', )
+    __slots__ = ('_attributes', 'id', 'classes')
 
 
 class TagWithChildren(Blox, AbstractTag):
     '''Defines a tag that can contain children'''
-    __slots__ = ('attributes', )
+    __slots__ = ('_attributes', 'id', 'classes')
     tag = ""
     tag_self_closes = False
 

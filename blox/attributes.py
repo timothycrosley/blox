@@ -20,13 +20,52 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 
-class Attribute(object):
-    '''Defines the most basic Blok attribute object'''
+class AbstractAttribute(object):
+    '''Defines the abstract Blok attribute concept'''
     __slots__ = ('name', 'signal', )
 
     def __init__(self, name, signal=False):
         self.name = name
         self.signal = signal
+
+    def from_string(obj, value):
+        return value
+
+    def to_python(obj, value):
+        return value
+
+    def to_string(obj, value):
+        return value
+
+
+class DirectAttribute(Attribute):
+    '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
+    __slots__ = ('object_attribute', 'type')
+
+    def __init__(self, object_attribute, name=None, signal=False, type=str):
+        super().__init__(name or object_attribute, signal)
+        self.object_attribute = object_attribute
+        self.type = type
+
+    def __get__(self, obj, cls):
+        if not hasattr(obj, self.object_attribute):
+            setattr(obj, self.object_attribute, self.type())
+
+        return getattr(obj, self.object_attribute)
+
+    def __set__(self, obj, value):
+        return setattr(obj, self.object_attribute, value)
+
+    def __delete__(self, obj):
+        delattr(obj, self.object_attribute)
+
+    def render(self, obj):
+        if hasattr(obj, self.object_attribute):
+            return '{0}="{1}"'.format(self.name, getattr(obj, self.object_attribute))
+
+
+class Attribute(AbstractAttribute):
+    '''Defines a basic Blok attribute that is rendered by the framework and stores its data in a .attributes dict'''
 
     def __get__(self, obj, cls):
         return obj.attributes[self.name]
@@ -38,7 +77,6 @@ class Attribute(object):
 
     def __delete__(self, obj):
         obj.attributes.pop(self.name, None)
-
 
 class AttributeTransform(object):
     '''Defines an attribute that transforms values for Python and HTML use'''
