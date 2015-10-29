@@ -166,6 +166,8 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     __slots__ = ()
     tag_self_closes = True
     tag = ""
+    id = DirectAttribute('id')
+    classes = DirectAttribute('classes', type=list)
 
     def __init__(self, **attributes):
         super().__init__()
