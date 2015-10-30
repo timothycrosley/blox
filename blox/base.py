@@ -167,7 +167,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     tag_self_closes = True
     tag = ""
     id = DirectAttribute('id')
-    classes = DirectAttribute('classes', type=list)
+    classes = DirectAttribute('classes', type=set)
 
     def __init__(self, **attributes):
         super().__init__()
@@ -210,6 +210,11 @@ class AbstractTag(Blok, metaclass=TagAttributes):
 class Tag(AbstractTag):
     '''A Blok that renders a single tag'''
     __slots__ = ('_attributes', 'id', 'classes')
+
+
+class NamedTag(AbstractTag):
+    '''A Tag with an attached name'''
+    name = DirectAttribute('name')
 
 
 class TagWithChildren(Blox, AbstractTag):
