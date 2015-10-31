@@ -56,9 +56,29 @@ class DirectAttribute(Attribute):
     def __delete__(self, obj):
         delattr(obj, self.object_attribute)
 
+    def render_value(self, obj):
+        return getattr(obj, self.object_attribute)
+
     def render(self, obj):
         if hasattr(obj, self.object_attribute):
-            return '{0}="{1}"'.format(self.name, getattr(obj, self.object_attribute))
+            return '{0}="{1}"'.format(self.name, self.render_value(obj))
+
+
+class ListAttribute(DirectAttribute):
+    '''Defines an attribute that is exposed from Python as a list'''
+
+    def __init__(self, object_attribute, name=None, signal=False):
+        super().__init__(name or object_attribute, signal, list)
+
+    def render_value(self, obj):
+        return " ".join(str(value) for value in list)
+
+
+class SetAttribute(ListAttribute):
+    '''Defines an attribute that is exposed from Python as a set'''
+
+    def __init__(self, object_attribute, name=None, signal=False):
+        super().__init__(name or object_attribute, signal, set)
 
 
 class Attribute(AbstractAttribute):
