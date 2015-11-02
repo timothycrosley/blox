@@ -22,7 +22,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 import re
 
 from connectable import Connectable
-from blox.attributes import Attribute
+from blox.attributes import Attribute, DirectAttribute, SetAttribute
 
 from io import StringIO
 
@@ -167,7 +167,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     tag_self_closes = True
     tag = ""
     id = DirectAttribute('id')
-    classes = DirectAttribute('classes', type=set)
+    classes = SetAttribute('classes')
 
     def __init__(self, **attributes):
         super().__init__()
@@ -186,7 +186,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
-        attributes = " ".join(filter(attribute.render() for attribute in self.render_attributes, bool))
+        attributes = " ".join(filter((attribute.render() for attribute in self.render_attributes), bool))
         attributes += " ".join('{0}="{1}"'.format(key, value) for key, value in self.attribute_descriptors.items() if
                                value)
         return "<{0}{1}{2}{3}>".format(self.tag, " " if attributes else "", attributes,

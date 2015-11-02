@@ -32,7 +32,7 @@ class AbstractAttribute(object):
         return value
 
 
-class DirectAttribute(Attribute):
+class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
     __slots__ = ('object_attribute', 'type')
 
