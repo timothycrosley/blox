@@ -20,9 +20,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 import re
+from itertools import chain
 
 from connectable import Connectable
-from blox.attributes import Attribute, DirectAttribute, SetAttribute
+from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute
 
 from io import StringIO
 
@@ -140,16 +141,17 @@ class TagAttributes(type):
 
     def __new__(metaclass, name, parents, class_dict, *kargs, **kwargs):
         '''Updates a tag class to automatically register all signals'''
-        attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute, Attribute)}
+        attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute,
+                                                                                              AbstractAttribute)}
         if attributes:
-            if getattr(parents[0], 'attribute_descriptors'):
+            if hasattr(parents[0], 'attribute_descriptors'):
                 full_attributes = parents[0].attribute_descriptors.copy()
                 full_attributes.update(attributes)
                 attributes = full_attributes
 
-            render_attributes = [attribute for attribute in attributes if hasattr(attribute, 'render')]
+            render_attributes = [attribute for attribute in attributes.values() if hasattr(attribute, 'render')]
             if render_attributes:
-                if getattr(parents[0], 'render_attributes'):
+                if hasattr(parents[0], 'render_attributes'):
                     render_attributes = parents[0].render_attributes + render_attributes
                 class_dict['render_attributes'] = render_attributes
 
@@ -166,8 +168,8 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     __slots__ = ()
     tag_self_closes = True
     tag = ""
-    id = DirectAttribute('id')
-    classes = SetAttribute('classes')
+    id = DirectAttribute('_id')
+    classes = SetAttribute('_classes')
 
     def __init__(self, **attributes):
         super().__init__()
@@ -186,11 +188,13 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
-        attributes = " ".join(filter((attribute.render() for attribute in self.render_attributes), bool))
-        attributes += " ".join('{0}="{1}"'.format(key, value) for key, value in self.attribute_descriptors.items() if
-                               value)
-        return "<{0}{1}{2}{3}>".format(self.tag, " " if attributes else "", attributes,
-                                         "/" if self.tag_self_closes else "")
+        direct_attributes = (attribute.render(self) for attribute in self.render_attributes)
+        attributes = ()
+        if hasattr(self, '_attributes'):
+            attributes = ('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value)
+
+        return ' '.join(filter(bool, chain(('<{0}'.format(self.tag), ), direct_attributes, attributes,
+                                           ('{0}>'.format('/' if self.tag_self_closes else ""), ))))
 
     @property
     def end_tag(self):
@@ -209,17 +213,18 @@ class AbstractTag(Blok, metaclass=TagAttributes):
 
 class Tag(AbstractTag):
     '''A Blok that renders a single tag'''
-    __slots__ = ('_attributes', 'id', 'classes')
+    __slots__ = ('_attributes', '_id', '_classes')
 
 
-class NamedTag(AbstractTag):
+class NamedTag(Tag):
     '''A Tag with an attached name'''
-    name = DirectAttribute('name')
+    __slots__ = ('_name')
+    name = DirectAttribute('_name')
 
 
 class TagWithChildren(Blox, AbstractTag):
     '''Defines a tag that can contain children'''
-    __slots__ = ('_attributes', 'id', 'classes')
+    __slots__ = ('_attributes', '_id', '_classes')
     tag = ""
     tag_self_closes = False
 

@@ -57,7 +57,7 @@ class DirectAttribute(AbstractAttribute):
         delattr(obj, self.object_attribute)
 
     def render_value(self, obj):
-        return getattr(obj, self.object_attribute)
+        return str(getattr(obj, self.object_attribute))
 
     def render(self, obj):
         if hasattr(obj, self.object_attribute):
