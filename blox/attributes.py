@@ -36,9 +36,9 @@ class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
     __slots__ = ('object_attribute', 'type')
 
-    def __init__(self, object_attribute, name=None, signal=False, type=str):
-        super().__init__(name or object_attribute, signal)
-        self.object_attribute = object_attribute
+    def __init__(self, name, signal=False, type=str, object_attribute=None):
+        super().__init__(name, signal)
+        self.object_attribute = object_attribute if object_attribute else '_' + name
         self.type = type
 
     def __get__(self, obj, cls):
@@ -66,9 +66,11 @@ class DirectAttribute(AbstractAttribute):
 
 class ListAttribute(DirectAttribute):
     '''Defines an attribute that is exposed from Python as a list'''
+    __slots__ = ()
+    list_type = list
 
-    def __init__(self, object_attribute, name=None, signal=False):
-        super().__init__(name or object_attribute, signal, list)
+    def __init__(self, name, signal=False, object_attribute=None):
+        super().__init__(name=name, signal=signal, type=self.list_type, object_attribute=object_attribute)
 
     def render_value(self, obj):
         return " ".join(str(value) for value in list)
@@ -76,13 +78,13 @@ class ListAttribute(DirectAttribute):
 
 class SetAttribute(ListAttribute):
     '''Defines an attribute that is exposed from Python as a set'''
-
-    def __init__(self, object_attribute, name=None, signal=False):
-        super().__init__(name or object_attribute, signal, set)
+    __slots__ = ()
+    list_type = set
 
 
 class Attribute(AbstractAttribute):
     '''Defines a basic Blok attribute that is rendered by the framework and stores its data in a .attributes dict'''
+    __slots__ = ()
 
     def __get__(self, obj, cls):
         return obj.attributes[self.name]
