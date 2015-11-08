@@ -19,6 +19,8 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-from blox.base import Tag
+from blox.base import Tag, NamedTag
 
-class DOM
+
+class DOM(Tag):
+    pass
