@@ -23,7 +23,7 @@ import re
 from itertools import chain
 
 from connectable import Connectable
-from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute
+from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute
 
 from io import StringIO
 
@@ -149,7 +149,15 @@ class TagAttributes(type):
                 full_attributes.update(attributes)
                 attributes = full_attributes
 
-            render_attributes = [attribute for attribute in attributes.values() if hasattr(attribute, 'render')]
+            render_attributes = []
+            for name, attribute in attributes.items():
+                if not hasattr(attribute, 'name'):
+                    attribute.name = name
+                if hasattr(attribute, 'render'):
+                    render_attributes.append(attribute)
+                    if not hasattr(attribute, 'object_attribute'):
+                        attribute.object_attribute = '_{0}'.format(name)
+
             if render_attributes:
                 if hasattr(parents[0], 'render_attributes'):
                     render_attributes = parents[0].render_attributes + render_attributes
@@ -168,8 +176,19 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     __slots__ = ()
     tag_self_closes = True
     tag = ""
-    id = DirectAttribute('id')
-    classes = SetAttribute('classes')
+    id = DirectAttribute()
+    classes = SetAttribute()
+    accesskey = Attribute()
+    contenteditable = BooleanAttribute(default=True)
+    contextmenu = Attribute()
+    dir = Attribute()
+    draggable = BooleanAttribute()
+    dropzone = Attribute()
+    hidden = BooleanAttribute()
+    lang = Attribute()
+    spellcheck = BooleanAttribute()
+    style = Attribute()
+    tab_index = IntegerAttribute()
 
     def __init__(self, **attributes):
         super().__init__()
@@ -219,7 +238,7 @@ class Tag(AbstractTag):
 class NamedTag(Tag):
     '''A Tag with an attached name'''
     __slots__ = ('_name')
-    name = DirectAttribute('name')
+    name = DirectAttribute()
 
 
 class TagWithChildren(Blox, AbstractTag):

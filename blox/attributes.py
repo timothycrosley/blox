@@ -22,10 +22,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 class AbstractAttribute(object):
     '''Defines the abstract Blok attribute concept'''
-    __slots__ = ('name', 'signal', )
+    __slots__ = ('name', 'signal')
 
-    def __init__(self, name, signal=False):
-        self.name = name
+    def __init__(self, signal=False):
         self.signal = signal
 
     def from_string(obj, value):
@@ -36,9 +35,8 @@ class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
     __slots__ = ('object_attribute', 'type')
 
-    def __init__(self, name, signal=False, type=str, object_attribute=None):
-        super().__init__(name, signal)
-        self.object_attribute = object_attribute if object_attribute else '_' + name
+    def __init__(self, signal=False, type=str):
+        super().__init__(signal)
         self.type = type
 
     def __get__(self, obj, cls):
@@ -69,8 +67,8 @@ class ListAttribute(DirectAttribute):
     __slots__ = ()
     list_type = list
 
-    def __init__(self, name, signal=False, object_attribute=None):
-        super().__init__(name=name, signal=signal, type=self.list_type, object_attribute=object_attribute)
+    def __init__(self, signal=False, object_attribute=None):
+        super().__init__(signal=signal, type=self.list_type, object_attribute=object_attribute)
 
     def render_value(self, obj):
         return " ".join(str(value) for value in list)
@@ -102,8 +100,8 @@ class AttributeTransform(object):
     '''Defines an attribute that transforms values for Python and HTML use'''
     __slots__ = ('to_python', 'to_html')
 
-    def __init__(self, name, signal=None, to_python=None, to_html=str):
-        super().__init__(name, signal)
+    def __init__(self, signal=None, to_python=None, to_html=str):
+        super().__init__(signal)
         self.to_python = to_python
         self.to_html = to_html
 
@@ -116,3 +114,28 @@ class AttributeTransform(object):
 
     def from_string(self, value):
         return self.to_python(value)
+
+
+class BooleanAttribute(AttributeTransform):
+    '''Defines a boolean attribute'''
+    __slots__ = ('default', )
+
+    def __init__(self, signal=None, default=False):
+        super().__init__(signal, self.as_boolean, self.as_string)
+        self.default = default
+
+    def as_boolean(self, value):
+        if value.lower() == 'true':
+            return True
+        elif value.lower() == 'false':
+            return False
+        return self.default
+
+    def as_string(self, value):
+        return str(value or self.default).lower()
+
+
+class IntegerAttribute(AttributeTransform):
+
+    def __init__(self, signal=None):
+        super().__init__(signal, int)
