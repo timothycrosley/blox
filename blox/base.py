@@ -157,6 +157,8 @@ class TagAttributes(type):
                     render_attributes.append(attribute)
                     if not hasattr(attribute, 'object_attribute'):
                         attribute.object_attribute = '_{0}'.format(name)
+            if render_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
+                class_dict['__slots__'] += tuple(attribute.name for attribute in render_attributes)
 
             if render_attributes:
                 if hasattr(parents[0], 'render_attributes'):
