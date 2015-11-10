@@ -190,7 +190,8 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     lang = Attribute()
     spellcheck = BooleanAttribute()
     style = Attribute()
-    tab_index = IntegerAttribute()
+    tabindex = IntegerAttribute()
+    translate = BooleanAttribute(true_string="yes", false_string="no")
 
     def __init__(self, **attributes):
         super().__init__()
