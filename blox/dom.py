@@ -21,6 +21,77 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.base import Tag, NamedTag
 
+from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute
 
-class DOM(Tag):
-    pass
+from blox.builder import Factory
+
+
+factory = Factory('dom')
+
+
+@factory.add()
+class A(Tag):
+    '''Defines a link that when clicked changes the current viewed page'''
+    __slots__ = ()
+    tag = "a"
+    href = Attribute()
+    media = Attribute()
+    rel = Attribute()
+    target = Attribute()
+    type = Attribute()
+
+
+@factory.add()
+class Abr(Tag):
+    '''Defines  an abbreviation or an acronym'''
+    __slots__ = ()
+    tag = "abr"
+
+
+@factory.add()
+class Address(Tag):
+    '''Defines contact info for the author of a document or article'''
+    __slots__ = ()
+    tag = "address"
+
+
+@factory.add()
+class Area(Tag):
+    '''Defines an area inside of an image map'''
+    __slots__ = ()
+    tag = 'area'
+    alt = Attribute()
+    coords = Attribute()
+    href = Attribute()
+    hreflang = Attribute()
+    media = Attribute()
+    rel = Attribute()
+    shape = Attribute()
+    target = Attribute()
+    type = Attribute()
+
+
+@factory.add()
+class Article(Tag):
+    '''Defines an independent, self-contained content'''
+    __slots__ = ()
+    tag = "article"
+
+
+@factory.add()
+class Aside(Tag):
+    '''Defines content as being aside from the content it is placed in'''
+    __slots__ = ()
+    tag = "aside"
+
+
+@factory.add()
+class Audio(Tag):
+    '''Defines sound, such as music or other audio streams'''
+    __slots__ = ()
+    tag = "audio"
+    autoplay = BooleanAttribute()
+    controls = BooleanAttribute()
+    loop = BooleanAttribute()
+    src = Attribute()
+
