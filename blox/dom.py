@@ -95,3 +95,15 @@ class Audio(Tag):
     loop = BooleanAttribute()
     src = Attribute()
 
+
+@factory.add()
+class B(Tag):
+    '''Defines bold text
+        NOTE: avoid using this element, when possible use elements that describe the content
+              instead of the appearance
+    '''
+    __slots__ = ()
+    tag = "b"
+
+
+
