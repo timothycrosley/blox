@@ -108,10 +108,7 @@ class Blox(Blok):
         return self.blox[index]
 
     def __setitem__(self, index, value):
-        if type(index) == int:
-            self.blox.__setitem__(index, value)
-        else:
-            self.attributes[index] = value
+        self.blox.__setitem__(index, value)
 
     def __delitem__(self, index):
         return self.blox.__delitem__(index)
@@ -232,6 +229,18 @@ class AbstractTag(Blok, metaclass=TagAttributes):
         if not self.tag_self_closes:
             to.write(self.end_tag)
 
+    def __contains__(self, attribute):
+        return blok in self.attribute
+
+    def __getitem__(self, attribute):
+        return self.attributes[attribute]
+
+    def __setitem__(self, attribute, value):
+        self.attributes[attribute] = value
+
+    def __delitem__(self, attribute):
+        del self.attributes[attribute]
+
 
 class Tag(AbstractTag):
     '''A Blok that renders a single tag'''
@@ -263,3 +272,27 @@ class TagWithChildren(Blox, AbstractTag):
             for blok in self.blox:
                 blok.output(to=to, *args, **kwargs)
             to.write(self.end_tag)
+
+    def __contains__(self, attribute_or_blok):
+        if type(attribute_or_blok) == int:
+            return Blox.__contains__(self, attribute_or_blok)
+        else:
+            return AbstractTag.__contains__(self, attribute_or_blok)
+
+    def __getitem__(self, attribute_or_blok):
+        if type(attribute_or_blok) == int:
+            return Blox.__getitem__(self, attribute_or_blok)
+        else:
+            return AbstractTag.__getitem__(self, attribute_or_blok)
+
+    def __setitem__(self, attribute_or_blok, value):
+        if type(attribute_or_blok) == int:
+            return Blox.__setitem__(self, attribute_or_blok, value)
+        else:
+            return AbstractTag.__setitem__(self, attribute_or_blok, value)
+
+    def __delitem__(self, attribute_or_blok):
+        if type(attribute_or_blok) == int:
+            return Blox.__delitem__(self, attribute_or_blok)
+        else:
+            return AbstractTag.__delitem__(self, attribute_or_blok)
