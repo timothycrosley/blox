@@ -19,7 +19,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-from blox.base import Tag, NamedTag
+from blox.base import Tag, TagWithChildren, NamedTagWithChildren
 
 from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute
 
@@ -30,7 +30,7 @@ factory = Factory('dom')
 
 
 @factory.add()
-class A(Tag):
+class A(TagWithChildren):
     '''Defines a link that when clicked changes the current viewed page'''
     __slots__ = ()
     tag = "a"
@@ -42,21 +42,21 @@ class A(Tag):
 
 
 @factory.add()
-class Abr(Tag):
+class Abr(TagWithChildren):
     '''Defines  an abbreviation or an acronym'''
     __slots__ = ()
     tag = "abr"
 
 
 @factory.add()
-class Address(Tag):
+class Address(TagWithChildren):
     '''Defines contact info for the author of a document or article'''
     __slots__ = ()
     tag = "address"
 
 
 @factory.add()
-class Area(Tag):
+class Area(TagWithChildren):
     '''Defines an area inside of an image map'''
     __slots__ = ()
     tag = 'area'
@@ -72,21 +72,21 @@ class Area(Tag):
 
 
 @factory.add()
-class Article(Tag):
+class Article(TagWithChildren):
     '''Defines an independent, self-contained content'''
     __slots__ = ()
     tag = "article"
 
 
 @factory.add()
-class Aside(Tag):
+class Aside(TagWithChildren):
     '''Defines content as being aside from the content it is placed in'''
     __slots__ = ()
     tag = "aside"
 
 
 @factory.add()
-class Audio(Tag):
+class Audio(TagWithChildren):
     '''Defines sound, such as music or other audio streams'''
     __slots__ = ()
     tag = "audio"
@@ -97,7 +97,7 @@ class Audio(Tag):
 
 
 @factory.add()
-class B(Tag):
+class B(TagWithChildren):
     '''Defines bold text
         NOTE: avoid using this element, when possible use elements that describe the content
               instead of the appearance
@@ -107,1168 +107,900 @@ class B(Tag):
 
 
 @factory.add()
-class Base(Tag):
+class Base(TagWithChildren):
     '''Defines the base URL for all relative URLs in a document'''
     __slots__ = ()
     tag = 'base'
     href = Attribute()
-    target = Attribute
+    target = Attribute()
 
 
 @factory.add()
-class BDI(Tag):
-    """
-        Defines a part of text that should be formatted in a different direction
+class BDI(TagWithChildren):
+    '''Defines a part of text that should be formatted in a different direction
         from the other text outside it
-    """
+    '''
     __slots__ = ()
     tag = "bdi"
 
 
 @factory.add()
-class BDO(Tag):
-    """
-        Defines an override of the current text-direction
-    """
+class BDO(TagWithChildren):
+    '''Defines an override of the current text-direction'''
     __slots__ = ()
     tag = "bdo"
-    properties = Tag.properties.copy()
-    properties['dir'] = {'action':'attribute'}
+    dir = Attribute()
 
 
 @factory.add()
-class BlockQuote(Tag):
-    """
-        Defines a section that is quoted from another source
-    """
+class BlockQuote(TagWithChildren):
+    '''Defines a section that is quoted from another source'''
     __slots__ = ()
     tag = "blockquote"
-    properties = Tag.properties.copy()
-    properties['cite'] = {'action':'attribute'}
+    cite = Attribute()
 
 
 @factory.add()
-class Body(Tag):
-    """
-        Defines the document's body - which contains all the visible parts of an HTML document
-    """
+class Body(TagWithChildren):
+    '''Defines the document's body - which contains all the visible parts of an HTML document'''
     __slots__ = ()
     tag = "body"
 
 
 @factory.add()
 class Br(Tag):
-    """
-        Defines a single line break
-    """
+    '''Defines a single line break'''
     __slots__ = ()
     tag = "br"
     tag_self_closes = True
-    allowsChildren = False
 
 
 @factory.add()
-class Button(Tag):
-    """
-        Defines a click-able button
-    """
+class Button(TagWithChildren):
+    '''Defines a click-able button'''
     __slots__ = ()
     tag = "button"
-    properties = Tag.properties.copy()
-    properties['autofocus'] = {'action':'attribute', 'type':'bool'}
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['form'] = {'action':'attribute'}
-    properties['formaction'] = {'action':'attribute'}
-    properties['formenctype'] = {'action':'attribute'}
-    properties['formnovalidate'] = {'action':'attribute', 'type':'bool'}
-    properties['formtarget'] = {'action':'attribute'}
-    properties['type'] = {'action':'attribute'}
-    properties['value'] = {'action':'attribute'}
+    autofocus = BooleanAttribute()
+    disabled = BooleanAttribute()
+    form = Attribute()
+    formaction = Attribute()
+    formenctype = Attribute()
+    formnovalidate = BooleanAttribute()
+    formtarget = Attribute()
+    type = Attribute()
+    value = Attribute()
 
 
 @factory.add()
 class Canvas(Tag):
-    """
-        Defines an area of the screen to draw graphic on the fly
-    """
+    '''Defines an area of the screen to draw graphic on the fly'''
     __slots__ = ()
     tag = "canvas"
-    allowsChildren = False
-    properties = Tag.properties.copy()
-    properties['height'] = {'action':'attribute', 'type':'int'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
+    height = IntegerAttribute()
+    width = IntegerAttribute()
 
 
 @factory.add()
-class Caption(Tag):
-    """
-        Defines a table caption
-    """
+class Caption(TagWithChildren):
+    '''Defines a table caption'''
     __slots__ = ()
     tag = "caption"
 
 
 @factory.add()
-class Cite(Tag):
-    """
-        Defines the title of a work
-    """
+class Cite(TagWithChildren):
+    '''Defines the title of a work'''
     __slots__ = ()
     tag = "cite"
 
 
 @factory.add()
-class Code(Tag):
-    """
-        Defines a piece of programming code
-    """
+class Code(TagWithChildren):
+    '''Defines a piece of programming code'''
     __slots__ = ()
     tag = "code"
 
 
 @factory.add()
-class Col(Tag):
-    """
-        Defines a table column
-    """
+class Col(TagWithChildren):
+    '''Defines a table column'''
     __slots__ = ()
     tag = "col"
-    properties = Tag.properties.copy()
-    properties['span'] = {'action':'attribute', 'type':'int'}
+    span = IntegerAttribute()
 
 
 @factory.add()
-class ColGroup(Tag):
-    """
-        Defines a group of one or more columns in a table
-    """
+class ColGroup(TagWithChildren):
+    '''Defines a group of one or more columns in a table'''
     __slots__ = ()
     tag = "colgroup"
-    properties = Tag.properties.copy()
-    properties['span'] = {'action':'attribute', 'type':'int'}
+    span = IntegerAttribute()
 
 
 @factory.add()
-class Command(Tag):
-    """
-        Defines a click-able command button
-    """
+class Command(TagWithChildren):
+    '''Defines a click-able command button'''
     __slots__ = ()
     tag = "command"
-    properties = Tag.properties.copy()
-    properties['checked'] = {'action':'attribute', 'type':'bool'}
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['icon'] = {'action':'attribute'}
-    properties['label'] = {'action':'attribute'}
-    properties['radiogroup'] = {'action':'attribute'}
-    properties['type'] = {'action':'attribute'}
+    checked = BooleanAttribute()
+    disabled = BooleanAttribute()
+    icon = Attribute()
+    label = Attribute()
+    radiogroup = Attribute()
+    type = Attribute()
 
 
 @factory.add()
-class DataList(Tag):
-    """
-        Defines a list of pre-defined options for input controls
-    """
+class DataList(TagWithChildren):
+    '''Defines a list of pre-defined options for input controls'''
     __slots__ = ()
     tag = "datalist"
 
 
 @factory.add()
-class DD(Tag):
-    """
-        Defines a description of an item in a definition list
-    """
+class DD(TagWithChildren):
+    '''Defines a description of an item in a definition list'''
     __slots__ = ()
     tag = "dd"
 
 
 @factory.add()
-class Del(Tag):
-    """
-        Defines text that has been deleted from a document
-    """
+class Del(TagWithChildren):
+    '''Defines text that has been deleted from a document'''
     __slots__ = ()
     tag = "del"
-    properties = Tag.properties.copy()
-    properties['cite'] = {'action':'attribute'}
-    properties['datetime'] = {'action':'attribute'}
+    cite = Attribute()
+    datetime = Attribute()
 
 
 @factory.add()
-class Details(Tag):
-    """
-        Defines collapse-able details
-    """
+class Details(TagWithChildren):
+    '''Defines collapse-able details'''
     __slots__ = ()
     tag = "details"
-    properties = Tag.properties.copy()
-    properties['open'] = {'action':'attribute'}
+    open = Attribute()
 
 
 @factory.add()
-class Dfn(Tag):
-    """
-        Defines a definition term
-    """
+class Dfn(TagWithChildren):
+    '''Defines a definition term'''
     __slots__ = ()
     tag = "dfn"
 
 
 @factory.add()
-class Div(Tag):
-    """
-        Defines a section of a document
-    """
+class Div(TagWithChildren):
+    '''Defines a section of a document'''
     __slots__ = ()
     tag = "div"
 
 
 @factory.add()
-class DL(Tag):
-    """
-        Defines a definition list
-    """
+class DL(TagWithChildren):
+    '''Defines a definition list'''
     __slots__ = ()
     tag = "dl"
 
 
 @factory.add()
-class DT(Tag):
-    """
-        Defines a term (an item) in a definition list
-    """
+class DT(TagWithChildren):
+    '''Defines a term (an item) in a definition list'''
     __slots__ = ()
     tag = "dt"
 
 
 @factory.add()
-class Em(Tag):
-    """
-        Defines emphasized text
-    """
+class Em(TagWithChildren):
+    '''Defines emphasized text'''
     __slots__ = ()
     tag = "em"
 
 
 @factory.add()
-class Embed(Tag):
-    """
-        Defines a container for an external (non-HTML) application
-    """
+class Embed(TagWithChildren):
+    '''Defines a container for an external (non-HTML) application'''
     __slots__ = ()
     tag = "embed"
-    properties = Tag.properties.copy()
-    properties['height'] = {'action':'attribute'}
-    properties['src'] = {'action':'attribute'}
-    properties['types'] = {'action':'attribute'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
+    height = Attribute()
+    src = Attribute()
+    types = Attribute()
+    width = IntegerAttribute()
 
 
 @factory.add()
-class FieldSet(Tag):
-    """
-        Defines a group of related elements in a form
-    """
+class FieldSet(TagWithChildren):
+    '''Defines a group of related elements in a form'''
     __slots__ = ()
     tag = "fieldset"
-    properties = Tag.properties.copy()
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['form'] = {'action':'attribute'}
+    disabled = BooleanAttribute()
+    form = Attribute()
 
 
 @factory.add()
-class FigCaption(Tag):
-    """
-        Defines a caption for a figure element
-    """
+class FigCaption(TagWithChildren):
+    '''Defines a caption for a figure element'''
     __slots__ = ()
     tag = "figcaption"
 
 
 @factory.add()
-class Figure(Tag):
-    """
-        Defines self-contained figure content
-    """
+class Figure(TagWithChildren):
+    '''Defines self-contained figure content'''
     __slots__ = ()
     tag = "figure"
 
 
 @factory.add()
-class Footer(Tag):
-    """
-        Defines a footer for a document or section
-    """
+class Footer(TagWithChildren):
+    '''Defines a footer for a document or section'''
     __slots__ = ()
     tag = "footer"
 
 
 @factory.add()
-class Form(Tag):
-    """
-        Defines a form for user input
-    """
+class Form(TagWithChildren):
+    '''Defines a form for user input'''
     __slots__ = ()
     tag = "form"
-    properties = Tag.properties.copy()
-    properties['accept'] = {'action':'attribute'}
-    properties['accept-charset'] = {'action':'attribute'}
-    properties['action'] = {'action':'attribute'}
-    properties['autocomplete'] = {'action':'attribute', 'type':'bool'}
-    properties['enctype'] = {'action':'attribute'}
-    properties['method'] = {'action':'attribute'}
-    properties['name'] = {'action':'attribute'}
-    properties['novalidate'] = {'action':'attribute'}
-    properties['target'] = {'action':'attribute'}
+    accept = Attribute()
+    accept-charset = Attribute()
+    action = Attribute()
+    autocomplete = BooleanAttribute()
+    enctype = Attribute()
+    method = Attribute()
+    name = Attribute()
+    novalidate = Attribute()
+    target = Attribute()
 
 
 @factory.add()
-class H(Tag):
-    """
-        Defines the abstract concept of an HTML header
-    """
+class H(TagWithChildren):
+    '''Defines the abstract concept of an HTML header'''
     __slots__ = ()
 
 
 @factory.add()
 class H1(H):
-    """
-        Defines the most important heading
-    """
+    '''Defines the most important heading'''
     __slots__ = ()
     tag = "h1"
 
 
 @factory.add()
 class H2(H):
-    """
-        Defines the 2nd most important heading
-    """
+    '''Defines the 2nd most important heading'''
     __slots__ = ()
     tag = "h2"
 
 
 @factory.add()
 class H3(H):
-    """
-        Defines the 3rd most important heading
-    """
+    '''Defines the 3rd most important heading'''
     __slots__ = ()
     tag = "h3"
 
 
 @factory.add()
 class H4(H):
-    """
-        Defines the 4th most important heading
-    """
+    '''Defines the 4th most important heading'''
     __slots__ = ()
     tag = "h4"
 
 
 @factory.add()
 class H5(H):
-    """
-        Defines the 5th most important heading
-    """
+    '''Defines the 5th most important heading'''
     __slots__ = ()
     tag = "h5"
 
 
 @factory.add()
 class H6(H):
-    """
-        Defines the least important heading
-    """
+    '''Defines the least important heading'''
     __slots__ = ()
     tag = "h6"
 
 
 @factory.add()
-class Head(Tag):
-    """
-        Defines information about the document
-    """
+class Head(TagWithChildren):
+    '''Defines information about the document'''
     __slots__ = ()
     tag = "head"
 
 
 @factory.add()
-class Header(Tag):
-    """
-        Defines a header for a document or section
-    """
+class Header(TagWithChildren):
+    '''Defines a header for a document or section'''
     __slots__ = ()
     tag = "header"
 
 
 @factory.add()
-class HGroup(Tag):
-    """
-        Defines a grouping of multiple header elements
-    """
+class HGroup(TagWithChildren):
+    '''Defines a grouping of multiple header elements'''
     __slots__ = ()
     tag = "hgroup"
 
 
 @factory.add()
 class HR(Tag):
-    """
-        Defines a thematic change in the content horizontally
-    """
+    '''Defines a thematic change in the content horizontally'''
     __slots__ = ()
     tag = "hr"
     tag_self_closes = True
-    allowsChildren = False
 
 
 @factory.add()
-class HTML(Tag):
-    """
-        Defines the root of an HTML document
-    """
+class HTML(TagWithChildren):
+    '''Defines the root of an HTML document'''
     __slots__ = ()
     tag = "html"
-    properties = Tag.properties.copy()
-    properties['manifest'] = {'action':'attribute'}
+    manifest = Attribute()
 
 
 @factory.add()
-class I(Tag):
-    """
-        Defines text that is in an alternate voice or mood
+class I(TagWithChildren):
+    '''Defines text that is in an alternate voice or mood
         NOTE: avoid using this element, when possible use elements that describe the content
               instead of the appearance
-    """
+    '''
     __slots__ = ()
     tag = "i"
 
 
 @factory.add()
-class IFrame(Tag):
-    """
-        Defines an inline frame
-    """
+class IFrame(TagWithChildren):
+    '''Defines an inline frame'''
     __slots__ = ()
     tag = "iframe"
-    properties = Tag.properties.copy()
-    properties['sandbox'] = {'action':'attribute'}
-    properties['seamless'] = {'action':'attribute', 'type':'bool'}
-    properties['src'] = {'action':'attribute'}
-    properties['srcdoc'] = {'action':'attribute'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
-    properties['frameborder'] = {'action':'attribute'}
+    sandbox = Attribute()
+    seamless = BooleanAttribute()
+    src = Attribute()
+    srcdoc = Attribute()
+    width = IntegerAttribute()
+    frameborder = Attribute()
 
 
 @factory.add()
 class Img(Tag):
-    """
-        Defines an image
-    """
+    '''Defines an image'''
     __slots__ = ()
     tag = "img"
     tag_self_closes = True
-    allowsChildren = False
-    properties = Tag.properties.copy()
-    properties['src'] = {'action':'setImage'}
-    properties['alt'] = {'action':'attribute'}
-    properties['crossorigin'] = {'action':'attribute'}
-    properties['ismap'] = {'action':'attribute', 'type':'bool'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
-    properties['height'] = {'action':'attribute', 'type':'int'}
-
-    def setImage(self, image):
-        self.attributes['src'] = Settings.STATIC_URL + image
-
-    def image(self):
-        return self.attributes['src'].replace(Settings.STATIC_URL, "")
+    src = Attribute()
+    alt = Attribute()
+    crossorigin = Attribute()
+    ismap = BooleanAttribute()
+    width = IntegerAttribute()
+    height = IntegerAttribute()
 
 
 @factory.add()
-class Input(Tag):
-    """
-        Defines an input control
-    """
+class Input(NamedTag):
+    '''Defines an input control'''
     __slots__ = ()
     tag = "input"
     tag_self_closes = True
-    allowsChildren = False
-    properties = Tag.properties.copy()
-    properties['accept'] = {'action':'attribute'}
-    properties['alt'] = {'action':'attribute'}
-    properties['autocomplete'] = {'action':'attribute', 'type':'bool'}
-    properties['autofocus'] = {'action':'attribute', 'type':'bool'}
-    properties['checked'] = {'action':'attribute', 'type':'bool'}
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['form'] = {'action':'attribute'}
-    properties['formaction'] = {'action':'attribute'}
-    properties['formenctype'] = {'action':'attribute'}
-    properties['formmethod'] = {'action':'attribute'}
-    properties['formnovalidate'] = {'action':'attribute'}
-    properties['formtarget'] = {'action':'attribute'}
-    properties['height'] = {'action':'attribute', 'type':'int'}
-    properties['list'] = {'action':'attribute'}
-    properties['max'] = {'action':'attribute'}
-    properties['maxlength'] = {'action':'attribute', 'type':'int'}
-    properties['min'] = {'action':'attribute'}
-    properties['multiple'] = {'action':'attribute', 'type':'bool'}
-    properties['pattern'] = {'action':'attribute'}
-    properties['placeholder'] = {'action':'attribute'}
-    properties['readonly'] = {'action':'attribute', 'type':'bool'}
-    properties['required'] = {'action':'attribute', 'type':'bool'}
-    properties['size'] = {'action':'attribute', 'type':'int'}
-    properties['src'] = {'action':'attribute'}
-    properties['step'] = {'action':'attribute', 'type':'int'}
-    properties['type'] = {'action':'attribute'}
-    properties['value'] = {'action':'attribute'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
+    accept = Attribute()
+    alt = Attribute()
+    autocomplete = BooleanAttribute()
+    autofocus = BooleanAttribute()
+    checked = BooleanAttribute()
+    disabled = BooleanAttribute()
+    form = Attribute()
+    formaction = Attribute()
+    formenctype = Attribute()
+    formmethod = Attribute()
+    formnovalidate = Attribute()
+    formtarget = Attribute()
+    height = IntegerAttribute()
+    list = Attribute()
+    max = Attribute()
+    maxlength = IntegerAttribute()
+    min = Attribute()
+    multiple = BooleanAttribute()
+    pattern = Attribute()
+    placeholder = Attribute()
+    readonly = BooleanAttribute()
+    required = BooleanAttribute()
+    size = IntegerAttribute()
+    src = Attribute()
+    step = IntegerAttribute()
+    type = DirectAttribute()
+    value = Attribute()
+    width = IntegerAttribute()
 
 
 @factory.add()
-class Ins(Tag):
-    """
-        Defines text that has been inserted into a document
-    """
+class Ins(TagWithChildren):
+    '''Defines text that has been inserted into a document'''
     __slots__ = ()
     tag = "ins"
-    properties = Tag.properties.copy()
-    properties['cite'] = {'action':'attribute'}
-    properties['datetime'] = {'action':'attribute'}
+    cite = Attribute()
+    datetime = Attribute()
 
 
 @factory.add()
-class Kbd(Tag):
-    """
-        Defines keyboard input
-    """
+class Kbd(TagWithChildren):
+    '''Defines keyboard input'''
     __slots__ = ()
     tag = "kbd"
 
 
 @factory.add()
-class KeyGen(Tag):
-    """
-        Defines a key-pair generator field
-    """
+class KeyGen(TagWithChildren):
+    '''Defines a key-pair generator field'''
     __slots__ = ()
     tag = "keygen"
-    properties = Tag.properties.copy()
-    properties['autofocus'] = {'action':'attribute', 'type':'bool'}
-    properties['challenge'] = {'action':'attribute', 'type':'bool'}
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['form'] = {'action':'attribute'}
-    properties['keytype'] = {'action':'attribute'}
-    properties['name'] = {'action':'attribute'}
+    autofocus = BooleanAttribute()
+    challenge = BooleanAttribute()
+    disabled = BooleanAttribute()
+    form = Attribute()
+    keytype = Attribute()
+    name = Attribute()
 
 
 @factory.add()
-class Label(Tag):
-    """
-        Defines a label for an input element
-    """
+class Label(TagWithChildren):
+    '''Defines a label for an input element'''
     __slots__ = ()
     tag = "label"
-    properties = Tag.properties.copy()
-    properties['for'] = {'action':'attribute'}
-    properties['form'] = {'action':'attribute'}
+    for = Attribute()
+    form = Attribute()
 
 
 @factory.add()
-class Legend(Tag):
-    """
-        Defines a caption for a fieldset, figure or details element
-    """
+class Legend(TagWithChildren):
+    '''Defines a caption for a fieldset, figure or details element'''
     __slots__ = ()
     tag = "legend"
 
 
 @factory.add()
-class LI(Tag):
-    """
-        Defines a list item
-    """
+class LI(TagWithChildren):
+    '''Defines a list item'''
     __slots__ = ()
     tag = "li"
-    properties = Tag.properties.copy()
-    properties['value'] = {'action':'attribute', 'type':'int'}
+    value = IntegerAttribute()
 
 
 @factory.add()
 class Link(Tag):
-    """
-        Defines the relationship between a document an external resource
-    """
+    '''Defines the relationship between a document an external resource'''
     __slots__ = ()
     tag = "link"
     tag_self_closes = True
-    allowsChildren = False
-    properties = Tag.properties.copy()
-    properties['charset'] = {'action':'attribute'}
-    properties['src'] = {'action':'setSource'}
-    properties['href'] = {'action':'setHref'}
-    properties['hreflang'] = {'action':'attribute'}
-    properties['media'] = {'action':'attribute'}
-    properties['rel'] = {'action':'attribute'}
-    properties['type'] = {'action':'attribute'}
-    properties['sizes'] = {'action':'attribute'}
-
-    def setHref(self, href):
-        self.attributes['href'] = Settings.STATIC_URL + href
-
-    def href(self):
-        return self.attributes['href'].replace(Settings.STATIC_URL, "")
-
-    def setSource(self, source):
-        self.attributes['src'] = Settings.STATIC_URL + source
-
-    def source(self, source):
-        return self.attributes['src'].replace(Settings.STATIC_URL, "")
+    charset = Attribute()
+    src = Attribute()
+    href = Attribute()
+    hreflang = Attribute()
+    media = Attribute()
+    rel = Attribute()
+    type = Attribute()
+    sizes = Attribute()
 
 
 @factory.add()
-class Map(Tag):
-    """
-        Defines a client side image map
-    """
+class Map(TagWithChildren):
+    '''Defines a client side image map'''
     __slots__ = ()
     tag = "map"
 
 
 @factory.add()
-class Mark(Tag):
-    """
-        Defines marked / highlighted text
-    """
+class Mark(TagWithChildren):
+    '''Defines marked / highlighted text'''
     __slots__ = ()
     tag = "mark"
 
 
 @factory.add()
 class Meta(Tag):
-    """
-        Defines metadata about an HTML document
-    """
+    '''Defines metadata about an HTML document'''
     __slots__ = ()
     tag = "meta"
     tag_self_closes = True
-    allowsChildren = False
-    properties = Tag.properties.copy()
-    properties['charset'] = {'action':'attribute'}
-    properties['content'] = {'action':'attribute'}
-    properties['http-equiv'] = {'action':'attribute'}
+    charset = Attribute()
+    content = Attribute()
+    http-equiv = Attribute()
 
 
 @factory.add()
-class Meter(Tag):
-    """
-        Defines a scalar measurement within a known range
-    """
+class Meter(TagWithChildren):
+    '''Defines a scalar measurement within a known range'''
     __slots__ = ()
     tag = "meter"
-    properties = Tag.properties.copy()
-    properties['form'] = {'action':'attribute'}
-    properties['high'] = {'action':'attribute', 'type':'int'}
-    properties['low'] = {'action':'attribute', 'type':'int'}
-    properties['max'] = {'action':'attribute', 'type':'int'}
-    properties['min'] = {'action':'attribute', 'type':'int'}
-    properties['optimum'] = {'action':'attribute', 'type':'int'}
-    properties['value'] = {'action':'attribute', 'type':'int'}
+    form = Attribute()
+    high = IntegerAttribute()
+    low = IntegerAttribute()
+    max = IntegerAttribute()
+    min = IntegerAttribute()
+    optimum = IntegerAttribute()
+    value = IntegerAttribute()
 
 
 @factory.add()
-class Nav(Tag):
-    """
-        Defines navigation links
-    """
+class Nav(TagWithChildren):
+    '''Defines navigation links'''
     __slots__ = ()
     tag = "nav"
 
 
 @factory.add()
-class NoScript(Tag):
-    """
-        Defines alternate content for users that do not support client side scripts
-    """
+class NoScript(TagWithChildren):
+    '''Defines alternate content for users that do not support client side scripts'''
     __slots__ = ()
     tag = "noscript"
 
 
 @factory.add()
-class Object(Tag):
-    """
-        Defines an embedded object
-    """
+class Object(TagWithChildren):
+    '''Defines an embedded object'''
     __slots__ = ()
     tag = "object"
-    properties = Tag.properties.copy()
-    properties['form'] = {'action':'attribute'}
-    properties['height'] = {'action':'attribute', 'type':'int'}
-    properties['type'] = {'action':'attribute'}
-    properties['usemap'] = {'action':'attribute'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
+    form = Attribute()
+    height = IntegerAttribute()
+    type = Attribute()
+    usemap = Attribute()
+    width = IntegerAttribute()
 
 
 @factory.add()
-class OL(Tag):
-    """
-        Defines an ordered list
-    """
+class OL(TagWithChildren):
+    '''Defines an ordered list'''
     __slots__ = ()
     tag = "ol"
-    properties = Tag.properties.copy()
-    properties['reversed'] = {'action':'attribute', 'type':'bool'}
-    properties['start'] = {'action':'attribute', 'type':'int'}
-    properties['type'] = {'action':'attribute'}
+    reversed = BooleanAttribute()
+    start = IntegerAttribute()
+    type = Attribute()
 
 
 @factory.add()
-class OptGroup(Tag):
-    """
-        Defines a group of related options in a drop-down list
-    """
+class OptGroup(TagWithChildren):
+    '''Defines a group of related options in a drop-down list'''
     __slots__ = ()
     tag = "optgroup"
-    properties = Tag.properties.copy()
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['label'] = {'action':'attribute'}
+    disabled = BooleanAttribute()
+    label = Attribute()
 
 
 @factory.add()
-class Option(Tag):
-    """
-        Defines an option in a drop-down list
-    """
+class Option(TagWithChildren):
+    '''Defines an option in a drop-down list'''
     __slots__ = ()
     tag = "option"
-    properties = Tag.properties.copy()
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['label'] = {'action':'attribute'}
-    properties['selected'] = {'action':'attribute', 'type':'bool'}
-    properties['value'] = {'action':'attribute'}
+    disabled = BooleanAttribute()
+    label = Attribute()
+    selected = BooleanAttribute()
+    value = Attribute()
 
 
 @factory.add()
-class Output(Tag):
-    """
-        Defines the result of a calculation
-    """
+class Output(TagWithChildren):
+    '''Defines the result of a calculation'''
     __slots__ = ()
     tag = "output"
-    properties = Tag.properties.copy()
-    properties['for'] = {'action':'attribute'}
-    properties['form'] = {'action':'attribute'}
+    for = Attribute()
+    form = Attribute()
 
 
 @factory.add()
-class P(Tag):
-    """
-        Defines a paragraph
-    """
+class P(TagWithChildren):
+    '''Defines a paragraph'''
     __slots__ = ()
     tag = "p"
 
 
 @factory.add()
 class Param(Tag):
-    """
-        Defines a parameter for an object
-    """
+    '''Defines a parameter for an object'''
     __slots__ = ()
     tag = "param"
     tag_self_closes = True
-    allowsChildren = False
-    properties = Tag.properties.copy()
-    properties['value'] = {'action':'attribute'}
+    value = Attribute()
 
 
 @factory.add()
-class Pre(Tag):
-    """
-        Defines pre formatted text
-    """
+class Pre(TagWithChildren):
+    '''Defines pre formatted text'''
     __slots__ = ()
     tag = "pre"
 
 
 @factory.add()
-class Progress(Tag):
-    """
-        Defines the progress of a task
-    """
+class Progress(TagWithChildren):
+    '''Defines the progress of a task'''
     __slots__ = ()
     tag = "progress"
-    properties = Tag.properties.copy()
-    properties['max'] = {'action':'attribute', 'type':'int'}
-    properties['value'] = {'action':'attribute', 'type':'int'}
+    max = IntegerAttribute()
+    value = IntegerAttribute()
 
 
 @factory.add()
-class Q(Tag):
-    """
-        Defines a short quotation
-    """
+class Q(TagWithChildren):
+    '''Defines a short quotation'''
     __slots__ = ()
     tag = "q"
-    properties = Tag.properties.copy()
-    properties['cite'] = {'action':'attribute'}
+    cite = Attribute()
 
 
 @factory.add()
-class RP(Tag):
-    """
-        Defines what to show in browsers that do not support ruby annotations
-    """
+class RP(TagWithChildren):
+    '''Defines what to show in browsers that do not support ruby annotations'''
     __slots__ = ()
     tag = "rp"
 
 
 @factory.add()
-class RT(Tag):
-    """
-        Defines an explanation / pronunciation of characters (for East Asian typography)
-    """
+class RT(TagWithChildren):
+    '''Defines an explanation / pronunciation of characters (for East Asian typography)'''
     __slots__ = ()
     tag = "rt"
 
 
 @factory.add()
-class Ruby(Tag):
-    """
-        Defines ruby annotations (for East Asian typography)
-    """
+class Ruby(TagWithChildren):
+    '''Defines ruby annotations (for East Asian typography)'''
     __slots__ = ()
     tag = "ruby"
 
 
 @factory.add()
-class S(Tag):
-    """
-        Defines text that is no longer correct
-    """
+class S(TagWithChildren):
+    '''Defines text that is no longer correct'''
     __slots__ = ()
     tag = "s"
 
 
 @factory.add()
-class Samp(Tag):
-    """
-        Defines sample output from a computer program
-    """
+class Samp(TagWithChildren):
+    '''Defines sample output from a computer program'''
     __slots__ = ()
     tag = "samp"
 
 
 @factory.add()
-class Script(Tag):
-    """
-        Defines a client-side script
-    """
+class Script(TagWithChildren):
+    '''Defines a client-side script'''
     __slots__ = ()
     tag = "script"
-    properties = Tag.properties.copy()
-    properties['async'] = {'action':'attribute', 'type':'bool'}
-    properties['defer'] = {'action':'attribute', 'type':'bool'}
-    properties['type'] = {'action':'attribute'}
-    properties['charset'] = {'action':'attribute'}
-    properties['src'] = {'action':'setScriptFile'}
-
-    def setScriptFile(self, scriptFile):
-        self.attributes['src'] = Settings.STATIC_URL + scriptFile
-
-    def scriptFile(self):
-        return self.attributes['src'].replace(Settings.STATIC_URL, "")
+    async = BooleanAttribute()
+    defer = BooleanAttribute()
+    type = Attribute()
+    charset = Attribute()
+    src = Attribute()
 
 
 @factory.add()
-class Section(Tag):
-    """
-        Defines a section of the document
-    """
+class Section(TagWithChildren):
+    '''Defines a section of the document'''
     __slots__ = ()
     tag = "section"
 
 
 @factory.add()
-class Select(Tag):
-    """
-        Defines a drop-down list
-    """
+class Select(TagWithChildren):
+    '''Defines a drop-down list'''
     __slots__ = ()
     tag = "select"
-    properties = Tag.properties.copy()
-    properties['autofocus'] = {'action':'attribute', 'type':'bool'}
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['form'] = {'action':'attribute'}
-    properties['multiple'] = {'action':'attribute', 'type':'bool'}
-    properties['size'] = {'action':'attribute', 'type':'int'}
+    autofocus = BooleanAttribute()
+    disabled = BooleanAttribute()
+    form = Attribute()
+    multiple = BooleanAttribute()
+    size = IntegerAttribute()
 
 
 @factory.add()
-class Small(Tag):
-    """
-        Defines smaller text
+class Small(TagWithChildren):
+    '''Defines smaller text
         NOTE: avoid using this element, when possible use elements that describe the content
               instead of the appearance
-    """
+    '''
     __slots__ = ()
     tag = "small"
 
 
 @factory.add()
-class Source(Tag):
-    """
-        Defines multiple media resources for media elements
-    """
+class Source(TagWithChildren):
+    '''Defines multiple media resources for media elements'''
     __slots__ = ()
     tag = "source"
-    properties = Tag.properties.copy()
-    properties['media'] = {'action':'attribute'}
-    properties['src'] = {'action':'attribute'}
-    properties['type'] = {'action':'attribute'}
+    media = Attribute()
+    src = Attribute()
+    type = Attribute()
 
 
 @factory.add()
-class Span(Tag):
-    """
-        Defines a section in a document
-    """
+class Span(TagWithChildren):
+    '''Defines a section in a document'''
     __slots__ = ()
     tag = "span"
 
 
 @factory.add()
-class Strong(Tag):
-    """
-        Defines important text
-    """
+class Strong(TagWithChildren):
+    '''Defines important text'''
     __slots__ = ()
     tag = "strong"
 
 
 @factory.add()
-class Style(Tag):
-    """
-        Defines style information for a document
-    """
+class Style(TagWithChildren):
+    '''Defines style information for a document'''
     __slots__ = ()
     tag = "style"
-    properties = Tag.properties.copy()
-    properties['media'] = {'action':'attribute'}
-    properties['scoped'] = {'action':'attribute', 'type':'bool'}
-    properties['type'] = {'action':'attribute'}
+    media = Attribute()
+    scoped = BooleanAttribute()
+    type = Attribute()
 
 
 @factory.add()
-class Sub(Tag):
-    """
-        Defines sub-scripted text
-    """
+class Sub(TagWithChildren):
+    '''Defines sub-scripted text'''
     __slots__ = ()
     tag = "sub"
 
 
 @factory.add()
-class Summary(Tag):
-    """
-        Defines a visible heading for a details element
-    """
+class Summary(TagWithChildren):
+    '''Defines a visible heading for a details element'''
     __slots__ = ()
     tag = "summary"
 
 
 @factory.add()
-class Sup(Tag):
-    """
-        Defines super-scripted text
-    """
+class Sup(TagWithChildren):
+    '''Defines super-scripted text'''
     __slots__ = ()
     tag = "sup"
 
 
 @factory.add()
-class Table(Tag):
-    """
-        Defines a table - should be used for tables of data only (not for layout)
-    """
+class Table(TagWithChildren):
+    '''Defines a table - should be used for tables of data only (not for layout)'''
     __slots__ = ()
     tag = "table"
-    properties = Tag.properties.copy()
-    properties['border'] = {'action':'attribute', 'type':'bool'}
+    border = BooleanAttribute()
 
 
 @factory.add()
-class TBody(Tag):
-    """
-        Defines a group of content within a table
-    """
+class TBody(TagWithChildren):
+    '''Defines a group of content within a table'''
     __slots__ = ()
     tag = "tbody"
 
 
 @factory.add()
-class TD(Tag):
-    """
-        Defines a table cell
-    """
+class TD(TagWithChildren):
+    '''Defines a table cell'''
     __slots__ = ()
     tag = "td"
-    properties = Tag.properties.copy()
-    properties['colspan'] = {'action':'attribute', 'type':'number'}
-    properties['headers'] = {'action':'attribute'}
-    properties['rowspan'] = {'action':'attribute', 'type':'number'}
+    colspan = IntegerAttribute()
+    headers = Attribute()
+    rowspan = IntegerAttribute()
 
 
 @factory.add()
-class TextArea(Tag):
-    """
-        Defines multi-line text input
-    """
+class TextArea(TagWithChildren):
+    '''Defines multi-line text input'''
     __slots__ = ()
     tag = "textarea"
-    properties = Tag.properties.copy()
-    properties['autofocus'] = {'action':'attribute', 'type':'bool'}
-    properties['cols'] = {'action':'attribute', 'type':'int'}
-    properties['disabled'] = {'action':'attribute', 'type':'bool'}
-    properties['form'] = {'action':'attribute'}
-    properties['maxlength'] = {'action':'attribute', 'type':'int'}
-    properties['placeholder'] = {'action':'attribute'}
-    properties['readonly'] = {'action':'attribute', 'type':'bool'}
-    properties['required'] = {'action':'attribute', 'type':'bool'}
-    properties['rows'] = {'action':'attribute', 'type':'int'}
-    properties['wrap'] = {'action':'attribute'}
+    autofocus = BooleanAttribute()
+    cols = IntegerAttribute()
+    disabled = BooleanAttribute()
+    form = Attribute()
+    maxlength = IntegerAttribute()
+    placeholder = Attribute()
+    readonly = BooleanAttribute()
+    required = BooleanAttribute()
+    rows = IntegerAttribute()
+    wrap = Attribute()
 
 
 @factory.add()
-class TFoot(Tag):
-    """
-        Defines the footer of a table
-    """
+class TFoot(TagWithChildren):
+    '''Defines the footer of a table'''
     __slots__ = ()
     tag = "tfoot"
 
 
 @factory.add()
-class TH(Tag):
-    """
-        Defines the header cell within a table
-    """
+class TH(TagWithChildren):
+    '''Defines the header cell within a table'''
     __slots__ = ()
     tag = "th"
-    properties = Tag.properties.copy()
-    properties['colspan'] = {'action':'attribute', 'type':'int'}
-    properties['headers'] = {'action':'attribute'}
-    properties['rowspan'] = {'action':'attribute', 'type':'int'}
-    properties['scope'] = {'action':'attribute'}
+    colspan = IntegerAttribute()
+    headers = Attribute()
+    rowspan = IntegerAttribute()
+    scope = Attribute()
 
 
 @factory.add()
-class THead(Tag):
-    """
-        Defines header content within a table
-    """
+class THead(TagWithChildren):
+    '''Defines header content within a table'''
     __slots__ = ()
     tag = "thead"
 
 
 @factory.add()
-class Time(Tag):
-    """
-        Defines a date / time
-    """
+class Time(TagWithChildren):
+    '''Defines a date / time'''
     __slots__ = ()
     tag = "time"
-    properties = Tag.properties.copy()
-    properties['datetime'] = {'action':'attribute'}
-    properties['pubdate'] = {'action':'attribute'}
+    datetime = Attribute()
+    pubdate = Attribute()
 
 
 @factory.add()
-class Title(Tag):
-    """
-        Defines the title of a document
-    """
+class Title(TagWithChildren):
+    '''Defines the title of a document'''
     __slots__ = ()
     tag = "title"
 
 
 @factory.add()
-class TR(Tag):
-    """
-        Defines a table row
-    """
+class TR(TagWithChildren):
+    '''Defines a table row'''
     __slots__ = ()
     tag = "tr"
 
 
 @factory.add()
-class Track(Tag):
-    """
-        Defines text tracks for media elements
-    """
+class Track(TagWithChildren):
+    '''Defines text tracks for media elements'''
     __slots__ = ()
     tag = "track"
-    properties = Tag.properties.copy()
-    properties['default'] = {'action':'attribute', 'type':'bool'}
-    properties['kind'] = {'action':'attribute'}
-    properties['label'] = {'action':'attribute'}
-    properties['src'] = {'action':'attribute'}
-    properties['srclang'] = {'action':'attribute'}
+    default = BooleanAttribute()
+    kind = Attribute()
+    label = Attribute()
+    src = Attribute()
+    srclang = Attribute()
 
 
 @factory.add()
-class U(Tag):
-    """
-        Defines text that should be stylistically different from normal text
+class U(TagWithChildren):
+    '''Defines text that should be stylistically different from normal text
         NOTE: avoid using this element, when possible use elements that describe the content
               instead of the appearance
-    """
+    '''
     __slots__ = ()
     tag = "u"
 
 
 @factory.add()
-class UL(Tag):
-    """
+class UL(TagWithChildren):
+    '''
         Defines an unordered list
-    """
+    '''
     __slots__ = ()
     tag = "ul"
 
 
 @factory.add()
-class Var(Tag):
-    """
-        Defines a variable
-    """
+class Var(TagWithChildren):
+    '''Defines a variable'''
     __slots__ = ()
     tag = "var"
 
 
 @factory.add()
-class Video(Tag):
-    """
-        Defines a video or movie
-    """
+class Video(TagWithChildren):
+    '''Defines a video or movie'''
     __slots__ = ()
     tag = "video"
-    properties = Tag.properties.copy()
-    properties['autoplay'] = {'action':'attribute', 'type':'bool'}
-    properties['controls'] = {'action':'attribute', 'type':'bool'}
-    properties['height'] = {'action':'attribute', 'type':'int'}
-    properties['loop'] = {'action':'attribute', 'type':'bool'}
-    properties['muted'] = {'action':'attribute', 'type':'bool'}
-    properties['poster'] = {'action':'attribute'}
-    properties['preload'] = {'action':'attribute'}
-    properties['src'] = {'action':'attribute'}
-    properties['width'] = {'action':'attribute', 'type':'int'}
+    autoplay = BooleanAttribute()
+    controls = BooleanAttribute()
+    height = IntegerAttribute()
+    loop = BooleanAttribute()
+    muted = BooleanAttribute()
+    poster = Attribute()
+    preload = Attribute()
+    src = Attribute()
+    width = IntegerAttribute()
 
 
 @factory.add()
-class Wbr(Tag):
-    """
-        Defines a possible line-break
-    """
+class Wbr(TagWithChildren):
+    '''Defines a possible line-break'''
     __slots__ = ()
     tag = "wbr"
-
-
