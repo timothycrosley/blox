@@ -89,18 +89,23 @@ class SetAttribute(RenderedDirect):
 
 class BlokAttribute(DirectAttribute):
     '''Defines an automatically added nested Blok as a child attribute'''
+    __slots__ = ('init', 'position')
 
-    def __init__(self, type, signal=False, doc="A child blok", name=None):
+    def __init__(self, type, init=False, position=None, signal=False, doc="A child blok", name=None):
         super().__init__(type=type, signal=signal, doc=doc, name=name)
+        self.init = init
+        self.position = position
 
     def __get__(self, obj, cls):
         if not hasattr(obj, self.object_attribute):
-            setattr(obj, self.object_attribute, obj(self.type()))
+            setattr(obj, self.object_attribute, obj(self.type(), getattr(self, 'position', None)))
 
         return getattr(obj, self.object_attribute)
 
     def __set__(self, obj, value):
-        return self.__get__(obj)(value)
+        self.__delete__(obj)
+        setattr(obj, self.object_attribute, obj(value, getattr(self, 'position', None)))
+        return value
 
     def __delete__(self, obj):
         if hasattr(obj, self.object_attribute):

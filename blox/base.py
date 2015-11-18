@@ -19,6 +19,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
+from collections import OrderedDict
 import re
 from itertools import chain
 
@@ -30,7 +31,56 @@ from io import StringIO
 UNDERSCORE = (re.compile('(.)([A-Z][a-z]+)'), re.compile('([a-z0-9])([A-Z])'))
 
 
-class Blok(Connectable):
+class TagAttributes(type):
+    '''A meta class to automatically register signals for tag attributes'''
+
+    def __new__(metaclass, name, parents, class_dict, *kargs, **kwargs):
+        '''Updates a tag class to automatically register all signals'''
+        attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute,
+                                                                                              AbstractAttribute)}
+        if attributes:
+            if hasattr(parents[0], 'attribute_descriptors'):
+                full_attributes = parents[0].attribute_descriptors.copy()
+                full_attributes.update(attributes)
+                attributes = full_attributes
+
+            render_attributes = []
+            direct_attributes = []
+            init_attributes = []
+            for attribute_name, attribute in attributes.items():
+                if not hasattr(attribute, 'name'):
+                    attribute.name = attribute_name
+                if isinstance(attribute, DirectAttribute):
+                    direct_attributes.append(attribute)
+                    if hasattr(attribute, 'render'):
+                        render_attributes.append(attribute)
+                    if not hasattr(attribute, 'object_attribute'):
+                        attribute.object_attribute = '_{0}'.format(attribute_name)
+                    if getattr(attribute, 'init', False):
+                        init_attributes.append(attribute_name)
+
+            if direct_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
+                class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in direct_attributes)
+
+            if render_attributes:
+                if hasattr(parents[0], 'render_attributes'):
+                    render_attributes = list(parents[0].render_attributes) + render_attributes
+                class_dict['render_attributes'] = set(render_attributes)
+
+            if init_attributes:
+                if hasattr(parents[0], 'init_attributes'):
+                    init_attributes = list(parents[0].init_attributes) + init_attributes
+                class_dict['init_attributes'] = init_attributes
+
+            class_dict['attribute_descriptors'] = attributes
+            attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
+            if attribute_signals:
+                class_dict['signals'] = class_dict.get('signals', ()) + tuple(attribute_signals)
+
+        return super(TagAttributes, metaclass).__new__(metaclass, name, parents, class_dict, *kargs, **kwargs)
+
+
+class Blok(Connectable, metaclass=TagAttributes):
     '''Defines the base blox blok object which can render itself and be instanciated'''
     __slots__ = ()
 
@@ -43,6 +93,9 @@ class Blok(Connectable):
         render_to = StringIO()
         self.output(render_to, *args, **kwargs)
         return render_to.getvalue()
+
+    def __str__(self):
+        return self.render(formatted=True)
 
 
 class Invalid(Blok):
@@ -88,6 +141,9 @@ class Blox(Blok):
 
     def __init__(self, *blox):
         super().__init__()
+        if hasattr(self, 'init_attributes'):
+            for attribute_name in self.init_attributes:
+                getattr(self, attribute_name)
         for blok in blox:
             self(blok)
 
@@ -98,9 +154,12 @@ class Blox(Blok):
             self._blox = []
         return self._blox
 
-    def __call__(self, blok):
+    def __call__(self, blok, position=None):
         '''Adds a nested blok to this blok'''
-        self.blox.append(blok)
+        if position is not None:
+            self.blox.insert(position, blok)
+        else:
+            self.blox.append(blok)
         return blok
 
     def __iter__(self):
@@ -117,9 +176,6 @@ class Blox(Blok):
 
     def __delitem__(self, index):
         return self.blox.__delitem__(index)
-
-    def __str__(self):
-        return self.render(formatted=True)
 
     def __isub__(self, blok):
         self.blox.remove(blok)
@@ -138,47 +194,7 @@ class Blox(Blok):
             blok.output(to=to, *args, **kwargs)
 
 
-class TagAttributes(type):
-    '''A meta class to automatically register signals for tag attributes'''
-
-    def __new__(metaclass, name, parents, class_dict, *kargs, **kwargs):
-        '''Updates a tag class to automatically register all signals'''
-        attributes = {name: attribute for name, attribute in class_dict.items() if isinstance(attribute,
-                                                                                              AbstractAttribute)}
-        if attributes:
-            if hasattr(parents[0], 'attribute_descriptors'):
-                full_attributes = parents[0].attribute_descriptors.copy()
-                full_attributes.update(attributes)
-                attributes = full_attributes
-
-            render_attributes = []
-            direct_attributes = []
-            for attribute_name, attribute in attributes.items():
-                if not hasattr(attribute, 'name'):
-                    attribute.name = attribute_name
-                if isinstance(attribute, DirectAttribute):
-                    direct_attributes.append(attribute)
-                    if hasattr(attribute, 'render'):
-                        render_attributes.append(attribute)
-                    if not hasattr(attribute, 'object_attribute'):
-                        attribute.object_attribute = '_{0}'.format(attribute_name)
-            if direct_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
-                class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in direct_attributes)
-
-            if render_attributes:
-                if hasattr(parents[0], 'render_attributes'):
-                    render_attributes = list(parents[0].render_attributes) + render_attributes
-                class_dict['render_attributes'] = set(render_attributes)
-
-            class_dict['attribute_descriptors'] = attributes
-            attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
-            if attribute_signals:
-                class_dict['signals'] = class_dict.get('signals', ()) + tuple(attribute_signals)
-
-        return super(TagAttributes, metaclass).__new__(metaclass, name, parents, class_dict, *kargs, **kwargs)
-
-
-class AbstractTag(Blok, metaclass=TagAttributes):
+class AbstractTag(Blok):
     '''A Blok that renders a single tag'''
     __slots__ = ()
     tag_self_closes = True
@@ -197,6 +213,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     style = Attribute()
     tabindex = IntegerAttribute()
     translate = BooleanAttribute(true_string="yes", false_string="no")
+    render_attributes = ()
 
     def __init__(self, **attributes):
         super().__init__()

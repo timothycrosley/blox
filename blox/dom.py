@@ -439,13 +439,6 @@ class H6(H):
 
 
 @factory.add()
-class Head(TagWithChildren):
-    '''Defines information about the document'''
-    __slots__ = ()
-    tag = "head"
-
-
-@factory.add()
 class Header(TagWithChildren):
     '''Defines a header for a document or section'''
     __slots__ = ()
@@ -998,6 +991,14 @@ class Title(TagWithChildren):
     __slots__ = ()
     tag = "title"
     text = BlokAttribute(Text)
+
+
+@factory.add()
+class Head(TagWithChildren):
+    '''Defines information about the document'''
+    __slots__ = ()
+    tag = "head"
+    title = BlokAttribute(Title)
 
 
 @factory.add()
