@@ -29,6 +29,29 @@ from blox.builder import Factory
 factory = Factory('dom')
 
 
+class DocType(Blok):
+    '''Defines the doctype of an HTML page'''
+    __slots__ = ('_type', )
+    signals = ('type_changed', )
+
+    def __init__(self, type='html'):
+        self._type = type
+
+    @property
+    def type(self):
+        return self._type
+
+    @type.setter
+    def set_type(self, type):
+        if type != self._type:
+            self.emit('type_changed', type)
+            self._type = type
+
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs the set text'''
+        to.write('<!DOCTYPE {0}>'.format(self.type))
+
+
 @factory.add()
 class A(TagWithChildren):
     '''Defines a link that when clicked changes the current viewed page'''
