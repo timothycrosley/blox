@@ -23,7 +23,7 @@ import re
 from itertools import chain
 
 from connectable import Connectable
-from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute, IntegerAttribute
+from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute, IntegerAttribute, DirectAttribute
 
 from io import StringIO
 
@@ -67,7 +67,7 @@ class Text(Blok):
         return self._value
 
     @value.setter
-    def set_value(self, value):
+    def value(self, value):
         if value != self._value:
             self.emit('value_changed', value)
             self._value = value
@@ -152,20 +152,23 @@ class TagAttributes(type):
                 attributes = full_attributes
 
             render_attributes = []
+            direct_attributes = []
             for attribute_name, attribute in attributes.items():
                 if not hasattr(attribute, 'name'):
                     attribute.name = attribute_name
-                if hasattr(attribute, 'render'):
-                    render_attributes.append(attribute)
+                if isinstance(attribute, DirectAttribute):
+                    direct_attributes.append(attribute)
+                    if hasattr(attribute, 'render'):
+                        render_attributes.append(attribute)
                     if not hasattr(attribute, 'object_attribute'):
                         attribute.object_attribute = '_{0}'.format(attribute_name)
-            if render_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
-                class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in render_attributes)
+            if direct_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
+                class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in direct_attributes)
 
             if render_attributes:
                 if hasattr(parents[0], 'render_attributes'):
-                    render_attributes = parents[0].render_attributes + render_attributes
-                class_dict['render_attributes'] = render_attributes
+                    render_attributes = list(parents[0].render_attributes) + render_attributes
+                class_dict['render_attributes'] = set(render_attributes)
 
             class_dict['attribute_descriptors'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
@@ -217,8 +220,9 @@ class AbstractTag(Blok, metaclass=TagAttributes):
         if hasattr(self, '_attributes'):
             attributes = ('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value)
 
-        return ' '.join(filter(bool, chain(('<{0}'.format(self.tag), ), direct_attributes, attributes,
-                                           ('{0}>'.format('/' if self.tag_self_closes else ""), ))))
+        rendered_attributes = " ".join(filter(bool, chain(direct_attributes, attributes)))
+        return '<{0}{1}{2}{3}>'.format(self.tag, ' ' if rendered_attributes else '',
+                                       rendered_attributes, '/' if self.tag_self_closes else "")
 
     @property
     def end_tag(self):
