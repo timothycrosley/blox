@@ -19,9 +19,9 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-from blox.base import Blok, Tag, TagWithChildren, NamedTagWithChildren, Text
+from blox.base import Blok, Tag, TagWithChildren, NamedTag, Text
 
-from blox.attributes import AbstractAttribute, Attribute, SetAttribute, BooleanAttribute, BlokAttribute, RenderedDirect
+from blox.attributes import AbstractAttribute, Attribute, SetAttribute, BooleanAttribute, BlokAttribute, RenderedDirect, IntegerAttribute
 
 from blox.builder import Factory
 
@@ -942,6 +942,7 @@ class TextArea(TagWithChildren):
     '''Defines multi-line text input'''
     __slots__ = ()
     tag = "textarea"
+    name = RenderedDirect()
     autofocus = BooleanAttribute()
     cols = IntegerAttribute()
     disabled = BooleanAttribute()

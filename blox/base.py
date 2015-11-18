@@ -23,7 +23,7 @@ import re
 from itertools import chain
 
 from connectable import Connectable
-from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute
+from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute, IntegerAttribute
 
 from io import StringIO
 
@@ -152,15 +152,15 @@ class TagAttributes(type):
                 attributes = full_attributes
 
             render_attributes = []
-            for name, attribute in attributes.items():
+            for attribute_name, attribute in attributes.items():
                 if not hasattr(attribute, 'name'):
-                    attribute.name = name
+                    attribute.name = attribute_name
                 if hasattr(attribute, 'render'):
                     render_attributes.append(attribute)
                     if not hasattr(attribute, 'object_attribute'):
-                        attribute.object_attribute = '_{0}'.format(name)
+                        attribute.object_attribute = '_{0}'.format(attribute_name)
             if render_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
-                class_dict['__slots__'] += tuple(attribute.name for attribute in render_attributes)
+                class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in render_attributes)
 
             if render_attributes:
                 if hasattr(parents[0], 'render_attributes'):
@@ -254,7 +254,7 @@ class Tag(AbstractTag):
 
 class NamedTag(Tag):
     '''A Tag with an attached name'''
-    __slots__ = ('_name')
+    __slots__ = ('_name', )
     name = RenderedDirect()
 
 

@@ -74,8 +74,8 @@ class ListAttribute(RenderedDirect):
     __slots__ = ()
     list_type = list
 
-    def __init__(self, signal=False, object_attribute=None, doc="Takes a list of values", name=None):
-        super().__init__(signal=signal, type=self.list_type, object_attribute=object_attribute, doc=doc, name=Name)
+    def __init__(self, signal=False, doc="Takes a list of values", name=None):
+        super().__init__(signal=signal, type=self.list_type, doc=doc, name=Name)
 
     def render_value(self, obj):
         return " ".join(str(value) for value in list)
@@ -90,10 +90,10 @@ class SetAttribute(RenderedDirect):
 class BlokAttribute(DirectAttribute):
     '''Defines an automatically added nested Blok as a child attribute'''
 
-    def __init__(self, type, signal=False, object_attribute=None, doc="A child blok", name=None):
-        super().__init__(type=type, signal=signal, object_attribute=object_attribute, doc=doc, name=name)
+    def __init__(self, type, signal=False, doc="A child blok", name=None):
+        super().__init__(type=type, signal=signal, doc=doc, name=name)
 
-     def __get__(self, obj, cls):
+    def __get__(self, obj, cls):
         if not hasattr(obj, self.object_attribute):
             setattr(obj, self.object_attribute, obj(self.type()))
 
@@ -123,12 +123,12 @@ class Attribute(AbstractAttribute):
         obj.attributes.pop(self.name, None)
 
 
-class AttributeTransform(object):
+class AttributeTransform(Attribute):
     '''Defines an attribute that transforms values for Python and HTML use'''
     __slots__ = ('to_python', 'to_html')
 
     def __init__(self, signal=None, to_python=None, to_html=str, doc="", name=None):
-        super().__init__(signal, doc=doc, name=name)
+        super().__init__(signal=signal, doc=doc, name=name)
         self.to_python = to_python
         self.to_html = to_html
 

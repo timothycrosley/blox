@@ -37,6 +37,7 @@ class Factory(object):
         def decorator(blok):
             self.products[(name or blok.__name__).lower()] = blok
             return blok
+        return decorator
 
     def __call__(self, blok_name, **properties):
         '''Builds and returns a Blok object'''
