@@ -76,6 +76,11 @@ class Text(Blok):
         '''Outputs the set text'''
         to.write(self._value)
 
+    def __call__(self, text):
+        '''Updates the text value'''
+        self.value = text
+        return self
+
 
 class Blox(Blok):
     '''A Block that can contain child blocks'''
