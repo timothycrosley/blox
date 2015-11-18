@@ -88,8 +88,8 @@ class SetAttribute(RenderedDirect):
 class BlokAttribute(DirectAttribute):
     '''Defines an automatically added nested Blok as a child attribute'''
 
-    def __init__(self, type, signal=False, doc="A child blok"):
-        super().__init__(type=type, signal, doc=doc)
+    def __init__(self, type, signal=False, object_attribute=None, doc="A child blok"):
+        super().__init__(type=type, signal=signal, object_attribute=object_attribute, doc=doc)
 
      def __get__(self, obj, cls):
         if not hasattr(obj, self.object_attribute):
