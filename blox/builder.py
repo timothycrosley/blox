@@ -52,5 +52,5 @@ class Composite(Factory):
         for factory in factories:
             self.products.update(factory.products)
             if factory.name:
-                for blok_name, product in iteritems(factory.products):
+                for blok_name, product in factory.products.items():
                     self.products[factory.name.lower() + "-" + blok_name] = product

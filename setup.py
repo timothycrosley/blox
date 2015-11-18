@@ -95,7 +95,7 @@ setup(name='blox',
       #  ]
       #},
       packages=['blox'],
-      requires=['connectable==1.2.0']],
+      requires=['connectable'],
       install_requires=['connectable==1.2.0'],
       cmdclass=cmdclass,
       ext_modules=ext_modules,

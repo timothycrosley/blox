@@ -256,7 +256,7 @@ class AbstractTag(Blok):
             to.write(self.end_tag)
 
     def __contains__(self, attribute):
-        return blok in self.attribute
+        return attribute in self.attributes
 
     def __getitem__(self, attribute):
         return self.attributes[attribute]

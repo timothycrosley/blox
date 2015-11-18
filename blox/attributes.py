@@ -30,7 +30,7 @@ class AbstractAttribute(object):
         if name:
             self.name = name
 
-    def from_string(obj, value):
+    def from_string(self, value):
         return value
 
 
@@ -48,7 +48,7 @@ class DirectAttribute(AbstractAttribute):
 
         return getattr(obj, self.object_attribute)
 
-    def from_string(obj, value):
+    def from_string(self, value):
         return self.type(value)
 
     def __set__(self, obj, value):
@@ -75,7 +75,7 @@ class ListAttribute(RenderedDirect):
     list_type = list
 
     def __init__(self, signal=False, doc="Takes a list of values", name=None):
-        super().__init__(signal=signal, type=self.list_type, doc=doc, name=Name)
+        super().__init__(signal=signal, type=self.list_type, doc=doc, name=name)
 
     def render_value(self, obj):
         return " ".join(str(value) for value in list)
@@ -120,7 +120,7 @@ class Attribute(AbstractAttribute):
         return obj.attributes[self.name]
 
     def __set__(self, obj, value):
-        if self.signal and not self.name in attributes or obj.attributes[self.name] != value:
+        if self.signal and not self.name in obj.attributes or obj.attributes[self.name] != value:
             obj.emit(self.signal, value)
         obj.attributes[self.name] = value
 
