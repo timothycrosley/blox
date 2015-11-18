@@ -55,6 +55,10 @@ class DirectAttribute(AbstractAttribute):
     def __delete__(self, obj):
         delattr(obj, self.object_attribute)
 
+
+class RenderedDirect(DirectAttribute):
+    '''Defines a direct attribute that gets rendered as part of the start tag'''
+
     def render_value(self, obj):
         return str(getattr(obj, self.object_attribute))
 
@@ -63,7 +67,7 @@ class DirectAttribute(AbstractAttribute):
             return '{0}="{1}"'.format(self.name, self.render_value(obj))
 
 
-class ListAttribute(DirectAttribute):
+class ListAttribute(RenderedDirect):
     '''Defines an attribute that is exposed from Python as a list'''
     __slots__ = ()
     list_type = list
@@ -75,10 +79,30 @@ class ListAttribute(DirectAttribute):
         return " ".join(str(value) for value in list)
 
 
-class SetAttribute(ListAttribute):
+class SetAttribute(RenderedDirect):
     '''Defines an attribute that is exposed from Python as a set'''
     __slots__ = ()
     list_type = set
+
+
+class BlokAttribute(DirectAttribute):
+    '''Defines an automatically added nested Blok as a child attribute'''
+
+    def __init__(self, type, signal=False, doc="A child blok"):
+        super().__init__(type=type, signal, doc=doc)
+
+     def __get__(self, obj, cls):
+        if not hasattr(obj, self.object_attribute):
+            setattr(obj, self.object_attribute, obj(self.type()))
+
+        return getattr(obj, self.object_attribute)
+
+    def __set__(self, obj, value):
+        return self.__get__(obj)(value)
+
+    def __delete__(self, obj):
+        if hasattr(obj, self.object_attribute):
+            obj.blox.remove(getattr(obj, self.object_attribute))
 
 
 class Attribute(AbstractAttribute):
