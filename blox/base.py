@@ -23,7 +23,7 @@ import re
 from itertools import chain
 
 from connectable import Connectable
-from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute
+from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute
 
 from io import StringIO
 
@@ -180,7 +180,7 @@ class AbstractTag(Blok, metaclass=TagAttributes):
     __slots__ = ()
     tag_self_closes = True
     tag = ""
-    id = DirectAttribute()
+    id = RenderedDirect()
     classes = SetAttribute()
     accesskey = Attribute()
     contenteditable = BooleanAttribute(default=True)
@@ -255,7 +255,7 @@ class Tag(AbstractTag):
 class NamedTag(Tag):
     '''A Tag with an attached name'''
     __slots__ = ('_name')
-    name = DirectAttribute()
+    name = RenderedDirect()
 
 
 class TagWithChildren(Blox, AbstractTag):

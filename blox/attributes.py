@@ -24,9 +24,11 @@ class AbstractAttribute(object):
     '''Defines the abstract Blok attribute concept'''
     __slots__ = ('name', 'signal', 'doc')
 
-    def __init__(self, signal=False, doc=""):
+    def __init__(self, signal=False, doc="", name=None):
         self.signal = signal
         self.doc = ""
+        if name:
+            self.name = name
 
     def from_string(obj, value):
         return value
@@ -36,8 +38,8 @@ class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
     __slots__ = ('object_attribute', 'type')
 
-    def __init__(self, signal=False, type=str, doc=""):
-        super().__init__(signal, doc=doc)
+    def __init__(self, signal=False, type=str, doc="", name=None):
+        super().__init__(signal, doc=doc, name=name)
         self.type = type
 
     def __get__(self, obj, cls):
@@ -72,8 +74,8 @@ class ListAttribute(RenderedDirect):
     __slots__ = ()
     list_type = list
 
-    def __init__(self, signal=False, object_attribute=None, doc="Takes a list of values"):
-        super().__init__(signal=signal, type=self.list_type, object_attribute=object_attribute, doc=doc)
+    def __init__(self, signal=False, object_attribute=None, doc="Takes a list of values", name=None):
+        super().__init__(signal=signal, type=self.list_type, object_attribute=object_attribute, doc=doc, name=Name)
 
     def render_value(self, obj):
         return " ".join(str(value) for value in list)
@@ -88,8 +90,8 @@ class SetAttribute(RenderedDirect):
 class BlokAttribute(DirectAttribute):
     '''Defines an automatically added nested Blok as a child attribute'''
 
-    def __init__(self, type, signal=False, object_attribute=None, doc="A child blok"):
-        super().__init__(type=type, signal=signal, object_attribute=object_attribute, doc=doc)
+    def __init__(self, type, signal=False, object_attribute=None, doc="A child blok", name=None):
+        super().__init__(type=type, signal=signal, object_attribute=object_attribute, doc=doc, name=name)
 
      def __get__(self, obj, cls):
         if not hasattr(obj, self.object_attribute):
@@ -125,8 +127,8 @@ class AttributeTransform(object):
     '''Defines an attribute that transforms values for Python and HTML use'''
     __slots__ = ('to_python', 'to_html')
 
-    def __init__(self, signal=None, to_python=None, to_html=str, doc=""):
-        super().__init__(signal, doc=doc)
+    def __init__(self, signal=None, to_python=None, to_html=str, doc="", name=None):
+        super().__init__(signal, doc=doc, name=name)
         self.to_python = to_python
         self.to_html = to_html
 
@@ -145,8 +147,8 @@ class BooleanAttribute(AttributeTransform):
     '''Defines a boolean attribute'''
     __slots__ = ('default', 'true_string', 'false_string')
 
-    def __init__(self, signal=None, default=False, true_string="true", false_string="false", doc="A true/false value"):
-        super().__init__(signal, self.as_boolean, self.as_string, doc=doc)
+    def __init__(self, signal=None, default=False, true_string="true", false_string="false", doc="A true/false value", name=None):
+        super().__init__(signal, self.as_boolean, self.as_string, doc=doc, name=name)
         self.default = default
         self.true_string = true_string
         self.false_string = false_string

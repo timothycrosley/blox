@@ -21,7 +21,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.base import Blok, Tag, TagWithChildren, NamedTagWithChildren, Text
 
-from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute, BlokAttribute
+from blox.attributes import AbstractAttribute, Attribute, SetAttribute, BooleanAttribute, BlokAttribute, RenderedDirect
 
 from blox.builder import Factory
 
@@ -379,7 +379,7 @@ class Form(TagWithChildren):
     __slots__ = ()
     tag = "form"
     accept = Attribute()
-    accept-charset = Attribute()
+    accept_charset = Attribute(name='accept-charset')
     action = Attribute()
     autocomplete = BooleanAttribute()
     enctype = Attribute()
@@ -543,7 +543,7 @@ class Input(NamedTag):
     size = IntegerAttribute()
     src = Attribute()
     step = IntegerAttribute()
-    type = DirectAttribute()
+    type = RenderedDirect()
     value = Attribute()
     width = IntegerAttribute()
 
@@ -583,7 +583,7 @@ class Label(TagWithChildren):
     '''Defines a label for an input element'''
     __slots__ = ()
     tag = "label"
-    for = DirectAttribute()
+    for_ = RenderedDirect(name="for")
     form = Attribute()
 
 
@@ -642,8 +642,8 @@ class Meta(Tag):
     tag = "meta"
     tag_self_closes = True
     charset = Attribute()
-    content = DirectAttribute()
-    http-equiv = Attribute()
+    content = RenderedDirect()
+    http_equiv = Attribute(name='http-equiv')
 
 
 @factory.add()
@@ -714,7 +714,7 @@ class Option(TagWithChildren):
     disabled = BooleanAttribute()
     label = Attribute()
     selected = BooleanAttribute()
-    value = DirectAttribute()
+    value = RenderedDirect()
     text = BlokAttribute(Text)
 
 
@@ -723,7 +723,7 @@ class Output(TagWithChildren):
     '''Defines the result of a calculation'''
     __slots__ = ()
     tag = "output"
-    for = Attribute()
+    for_ = Attribute(name="for")
     form = Attribute()
 
 
@@ -741,7 +741,7 @@ class Param(Tag):
     __slots__ = ()
     tag = "param"
     tag_self_closes = True
-    value = DirectAttribute()
+    value = RenderedDirect()
 
 
 @factory.add()
