@@ -19,9 +19,9 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-from blox.base import Tag, TagWithChildren, NamedTagWithChildren
+from blox.base import Blok, Tag, TagWithChildren, NamedTagWithChildren, Text
 
-from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute
+from blox.attributes import AbstractAttribute, Attribute, DirectAttribute, SetAttribute, BooleanAttribute, BlokAttribute
 
 from blox.builder import Factory
 
@@ -69,6 +69,7 @@ class Abr(TagWithChildren):
     '''Defines  an abbreviation or an acronym'''
     __slots__ = ()
     tag = "abr"
+
 
 
 @factory.add()
@@ -127,6 +128,7 @@ class B(TagWithChildren):
     '''
     __slots__ = ()
     tag = "b"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -145,6 +147,7 @@ class BDI(TagWithChildren):
     '''
     __slots__ = ()
     tag = "bdi"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -153,6 +156,7 @@ class BDO(TagWithChildren):
     __slots__ = ()
     tag = "bdo"
     dir = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -161,6 +165,7 @@ class BlockQuote(TagWithChildren):
     __slots__ = ()
     tag = "blockquote"
     cite = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -222,6 +227,7 @@ class Code(TagWithChildren):
     '''Defines a piece of programming code'''
     __slots__ = ()
     tag = "code"
+    content = BlokAttribute(Text)
 
 
 @factory.add()
@@ -265,6 +271,7 @@ class DD(TagWithChildren):
     '''Defines a description of an item in a definition list'''
     __slots__ = ()
     tag = "dd"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -274,6 +281,7 @@ class Del(TagWithChildren):
     tag = "del"
     cite = Attribute()
     datetime = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -282,6 +290,7 @@ class Details(TagWithChildren):
     __slots__ = ()
     tag = "details"
     open = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -289,6 +298,7 @@ class Dfn(TagWithChildren):
     '''Defines a definition term'''
     __slots__ = ()
     tag = "dfn"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -310,6 +320,7 @@ class DT(TagWithChildren):
     '''Defines a term (an item) in a definition list'''
     __slots__ = ()
     tag = "dt"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -317,6 +328,7 @@ class Em(TagWithChildren):
     '''Defines emphasized text'''
     __slots__ = ()
     tag = "em"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -344,6 +356,7 @@ class FigCaption(TagWithChildren):
     '''Defines a caption for a figure element'''
     __slots__ = ()
     tag = "figcaption"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -380,6 +393,7 @@ class Form(TagWithChildren):
 class H(TagWithChildren):
     '''Defines the abstract concept of an HTML header'''
     __slots__ = ()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -541,6 +555,7 @@ class Ins(TagWithChildren):
     tag = "ins"
     cite = Attribute()
     datetime = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -568,7 +583,7 @@ class Label(TagWithChildren):
     '''Defines a label for an input element'''
     __slots__ = ()
     tag = "label"
-    for = Attribute()
+    for = DirectAttribute()
     form = Attribute()
 
 
@@ -577,6 +592,7 @@ class Legend(TagWithChildren):
     '''Defines a caption for a fieldset, figure or details element'''
     __slots__ = ()
     tag = "legend"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -585,6 +601,7 @@ class LI(TagWithChildren):
     __slots__ = ()
     tag = "li"
     value = IntegerAttribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -615,6 +632,7 @@ class Mark(TagWithChildren):
     '''Defines marked / highlighted text'''
     __slots__ = ()
     tag = "mark"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -624,7 +642,7 @@ class Meta(Tag):
     tag = "meta"
     tag_self_closes = True
     charset = Attribute()
-    content = Attribute()
+    content = DirectAttribute()
     http-equiv = Attribute()
 
 
@@ -676,6 +694,7 @@ class OL(TagWithChildren):
     reversed = BooleanAttribute()
     start = IntegerAttribute()
     type = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -695,7 +714,8 @@ class Option(TagWithChildren):
     disabled = BooleanAttribute()
     label = Attribute()
     selected = BooleanAttribute()
-    value = Attribute()
+    value = DirectAttribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -712,6 +732,7 @@ class P(TagWithChildren):
     '''Defines a paragraph'''
     __slots__ = ()
     tag = "p"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -720,7 +741,7 @@ class Param(Tag):
     __slots__ = ()
     tag = "param"
     tag_self_closes = True
-    value = Attribute()
+    value = DirectAttribute()
 
 
 @factory.add()
@@ -728,6 +749,7 @@ class Pre(TagWithChildren):
     '''Defines pre formatted text'''
     __slots__ = ()
     tag = "pre"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -745,6 +767,7 @@ class Q(TagWithChildren):
     __slots__ = ()
     tag = "q"
     cite = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -759,6 +782,7 @@ class RT(TagWithChildren):
     '''Defines an explanation / pronunciation of characters (for East Asian typography)'''
     __slots__ = ()
     tag = "rt"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -766,6 +790,7 @@ class Ruby(TagWithChildren):
     '''Defines ruby annotations (for East Asian typography)'''
     __slots__ = ()
     tag = "ruby"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -773,6 +798,7 @@ class S(TagWithChildren):
     '''Defines text that is no longer correct'''
     __slots__ = ()
     tag = "s"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -780,6 +806,7 @@ class Samp(TagWithChildren):
     '''Defines sample output from a computer program'''
     __slots__ = ()
     tag = "samp"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -792,6 +819,7 @@ class Script(TagWithChildren):
     type = Attribute()
     charset = Attribute()
     src = Attribute()
+    code = BlokAttribute(Text)
 
 
 @factory.add()
@@ -821,6 +849,7 @@ class Small(TagWithChildren):
     '''
     __slots__ = ()
     tag = "small"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -845,6 +874,7 @@ class Strong(TagWithChildren):
     '''Defines important text'''
     __slots__ = ()
     tag = "strong"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -855,6 +885,7 @@ class Style(TagWithChildren):
     media = Attribute()
     scoped = BooleanAttribute()
     type = Attribute()
+    css = BlokAttribute(Text)
 
 
 @factory.add()
@@ -862,6 +893,7 @@ class Sub(TagWithChildren):
     '''Defines sub-scripted text'''
     __slots__ = ()
     tag = "sub"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -869,6 +901,7 @@ class Summary(TagWithChildren):
     '''Defines a visible heading for a details element'''
     __slots__ = ()
     tag = "summary"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -876,6 +909,7 @@ class Sup(TagWithChildren):
     '''Defines super-scripted text'''
     __slots__ = ()
     tag = "sup"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -918,6 +952,7 @@ class TextArea(TagWithChildren):
     required = BooleanAttribute()
     rows = IntegerAttribute()
     wrap = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -936,6 +971,7 @@ class TH(TagWithChildren):
     headers = Attribute()
     rowspan = IntegerAttribute()
     scope = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -952,6 +988,7 @@ class Time(TagWithChildren):
     tag = "time"
     datetime = Attribute()
     pubdate = Attribute()
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -959,6 +996,7 @@ class Title(TagWithChildren):
     '''Defines the title of a document'''
     __slots__ = ()
     tag = "title"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -988,6 +1026,7 @@ class U(TagWithChildren):
     '''
     __slots__ = ()
     tag = "u"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
@@ -1004,6 +1043,7 @@ class Var(TagWithChildren):
     '''Defines a variable'''
     __slots__ = ()
     tag = "var"
+    text = BlokAttribute(Text)
 
 
 @factory.add()
