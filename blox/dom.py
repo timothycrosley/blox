@@ -459,14 +459,6 @@ class HR(Tag):
 
 
 @factory.add()
-class HTML(TagWithChildren):
-    '''Defines the root of an HTML document'''
-    __slots__ = ()
-    tag = "html"
-    manifest = Attribute()
-
-
-@factory.add()
 class I(TagWithChildren):
     '''Defines text that is in an alternate voice or mood
         NOTE: avoid using this element, when possible use elements that describe the content
@@ -1067,3 +1059,13 @@ class Wbr(TagWithChildren):
     '''Defines a possible line-break'''
     __slots__ = ()
     tag = "wbr"
+
+
+@factory.add()
+class HTML(TagWithChildren):
+    '''Defines the root of an HTML document'''
+    __slots__ = ()
+    tag = "html"
+    manifest = Attribute()
+    head = BlokAttribute(Head, position=0)
+    body = BlokAttribute(Body, position=1)

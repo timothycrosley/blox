@@ -23,7 +23,7 @@ from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, Boolea
                              IntegerAttribute, RenderedDirect, SetAttribute)
 from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren, Text
 from blox.builder import Factory
-from blox.dom import Body, DocType, Head
+from blox.dom import DocType, HTML
 
 factory = Factory("Document")
 
@@ -33,5 +33,4 @@ class Document(Blox):
     '''Defines the basic concept of full HTML document/page'''
     __slots__ = ()
     doc_type = BlokAttribute(DocType, init=True, position=0)
-    head = BlokAttribute(Head, position=1)
-    body = BlokAttribute(Body, position=2)
+    html = BlokAttribute(HTML, position=1)
