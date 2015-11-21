@@ -34,6 +34,15 @@ class AbstractAttribute(object):
         return value
 
 
+class NestedAttribute(object):
+    '''Defines a reference to a nested attribute'''
+    __slots__ = ('attribute', )
+
+    def __init__(self, attribute, signal=False, doc="", name=None):
+        super().__init__(signal=signal, doc=doc, name=name)
+        self.attribute = attribute
+
+
 class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
     __slots__ = ('object_attribute', 'type')
