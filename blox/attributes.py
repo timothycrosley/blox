@@ -40,7 +40,11 @@ class NestedAttribute(object):
 
     def __init__(self, attribute, signal=False, doc="", name=None):
         super().__init__(signal=signal, doc=doc, name=name)
-        self.attribute = attribute
+        self.attribute = attribute.split('.')
+
+    def __get__(self, obj, cls):
+        for seciton in self.attribute:
+            pass
 
 
 class DirectAttribute(AbstractAttribute):
