@@ -43,8 +43,10 @@ class NestedAttribute(object):
         self.attribute = attribute.split('.')
 
     def __get__(self, obj, cls):
-        for seciton in self.attribute:
-            pass
+        current_obj = obj
+        for section in self.attribute[:-1]:
+            current_obj = getattr(obj, section)
+        return getattr(obj, section[-1])
 
 
 class DirectAttribute(AbstractAttribute):
