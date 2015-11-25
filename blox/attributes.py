@@ -48,6 +48,12 @@ class NestedAttribute(object):
             current_obj = getattr(obj, section)
         return getattr(obj, section[-1])
 
+    def __set__(self, obj, value):
+        current_obj = obj
+        for section in self.attribute[:-1]:
+            current_obj = setattr(obj, section)
+        return setattr(obj, section[-1])
+
 
 class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
