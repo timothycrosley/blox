@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
-                             IntegerAttribute, RenderedDirect, SetAttribute)
+                             IntegerAttribute, RenderedDirect, SetAttribute, NestedAttribute)
 from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren, Text
 from blox.builder import Factory
 from blox.dom import DocType, HTML
@@ -34,3 +34,6 @@ class Document(Blox):
     __slots__ = ()
     doc_type = BlokAttribute(DocType, init=True, position=0)
     html = BlokAttribute(HTML, position=1)
+    head = NestedAttribute('html.head')
+    title = NestedAttribute('html.head.title.text')
+    body = NestedAttribute('html.body')
