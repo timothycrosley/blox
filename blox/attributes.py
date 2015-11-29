@@ -45,13 +45,13 @@ class NestedAttribute(AbstractAttribute):
     def __get__(self, obj, cls):
         current_obj = obj
         for section in self.attribute[:-1]:
-            current_obj = getattr(obj, section)
+            current_obj = getattr(current_obj, section)
         return getattr(obj, self.attribute[-1])
 
     def __set__(self, obj, value):
         current_obj = obj
         for section in self.attribute[:-1]:
-            current_obj = setattr(obj, section)
+            current_obj = getattr(current_obj, section)
         return setattr(obj, self.attribute[-1])
 
 
