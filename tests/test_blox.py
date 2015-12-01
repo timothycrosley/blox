@@ -21,9 +21,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-import blox
+import blox.dom import B
 
 
 def test_blox():
     '''Test to ensure blox works as expected'''
-    assert blox
+    assert str(B()) == "<b></b>"
