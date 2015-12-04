@@ -21,7 +21,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-import blox.dom import B
+from blox.dom import B
 
 
 def test_blox():
