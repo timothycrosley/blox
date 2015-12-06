@@ -77,6 +77,21 @@ class TestBlox(TestBlok):
         assert self.hi in self.blok
         assert self.bacon in self.blok
 
+        for_testing = Text('for testing')
+        self.blok += for_testing
+        assert self.blok[2] == for_testing
+        assert len(self.blok) == 2
+        assert for_testing in self.blok
+        self.blok -= for_testing
+        assert not for_testing in self.blok
+
+        self.blok += for_testing
+        del self.blok[2]
+        assert not for_testing in self.blok
+
+        for blok in self.blok:
+            assert isinstance(blok, Text)
+
 
 class TestTag(TestBlok):
     expected_output = '<testing />'
