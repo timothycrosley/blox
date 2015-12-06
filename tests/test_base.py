@@ -20,8 +20,67 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from blox.dom import TagWithChildren
+from blox.base import Blok, Invalid, Text, Blox, Tag, NamedTag, TagWithChildren
+from io import StringIO
 
 
-class TestTagWithChildren(object):
-    pass
+class TestBlok(object):
+    testing = Blok
+
+    def __init__(self):
+        self.blok = self.testing()
+
+    def test_output(self):
+        self.blok.output(StringIO())
+
+    def test_render(self):
+        output = StringIO()
+        self.blok.output(output)
+        assert self.blok.render() == str(output)
+
+    def test_str(self):
+        str(self.blok) == self.blok.render(formatted=True)
+
+
+class TestInvalid(TestBlok):
+    testing = Invalid
+
+    def test_output(self):
+        output = StringIO()
+        self.blok.output(output)
+        assert str(output) == '<h2>Invalid</h2>'
+
+
+class TestText(TestBlok):
+    testing = Text
+
+    def test_set_value(self):
+        self.blok.value = 'test text'
+        assert self.blok.value == 'test text'
+
+
+class TestBlox(TestBlok):
+    testing = Blox
+
+    def test_with_children(self):
+        self.blok += Text('hi')
+        self.blok += Text(' bacon')
+        assert self.blok.render() == 'hi bacon'
+
+
+class TestTag(TestBlok):
+    class testing(Tag):
+        tag = 'testing'
+
+    def test_tag_render(self):
+        assert self.blok.render() == "<testing />"
+
+
+class TestTagWithChildren(TestBlox):
+    class testing(TagWithChildren):
+        tag = 'testing'
+
+    def test_with_children(self):
+        self.blok += Text('hi')
+        self.blok += Text(' bacon')
+        assert self.blok.render() == '<testing>hi bacon</testing>'
