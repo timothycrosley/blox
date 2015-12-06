@@ -26,12 +26,20 @@ from io import StringIO
 
 class TestBlok(object):
     testing = Blok
+    expected_output = ''
 
     def __init__(self):
         self.blok = self.testing()
+        self.modify()
+
+    def modify(self):
+        '''Sub test classes can modify the blok here for testing, before all tests are ran'''
+        pass
 
     def test_output(self):
-        self.blok.output(StringIO())
+        output = StringIO()
+        self.blok.output(output)
+        assert str(output) == self.expected_output
 
     def test_render(self):
         output = StringIO()
@@ -44,43 +52,35 @@ class TestBlok(object):
 
 class TestInvalid(TestBlok):
     testing = Invalid
-
-    def test_output(self):
-        output = StringIO()
-        self.blok.output(output)
-        assert str(output) == '<h2>Invalid</h2>'
+    expected_output = '<h2>Invalid</h2>'
 
 
 class TestText(TestBlok):
     testing = Text
+    expected_output = 'test text'
 
-    def test_set_value(self):
+    def modify(self):
         self.blok.value = 'test text'
-        assert self.blok.value == 'test text'
 
 
 class TestBlox(TestBlok):
     testing = Blox
+    expected_output = 'hi bacon'
 
-    def test_with_children(self):
-        self.blok += Text('hi')
-        self.blok += Text(' bacon')
-        assert self.blok.render() == 'hi bacon'
+    def modify(self):
+        self.hi = Text('hi')
+        self.bacon = Text(' bacon')
+        self.blok += self.hi
+        self.blok += self.bacon
 
 
 class TestTag(TestBlok):
+    expected_output = '<testing />'
     class testing(Tag):
         tag = 'testing'
 
-    def test_tag_render(self):
-        assert self.blok.render() == "<testing />"
-
 
 class TestTagWithChildren(TestBlox):
+    expected_output = '<testing>hi bacon</testing>'
     class testing(TagWithChildren):
         tag = 'testing'
-
-    def test_with_children(self):
-        self.blok += Text('hi')
-        self.blok += Text(' bacon')
-        assert self.blok.render() == '<testing>hi bacon</testing>'
