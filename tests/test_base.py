@@ -73,6 +73,10 @@ class TestBlox(TestBlok):
         self.blok += self.hi
         self.blok += self.bacon
 
+    def test_list_like(self):
+        assert self.hi in self.blok
+        assert self.bacon in self.blok
+
 
 class TestTag(TestBlok):
     expected_output = '<testing />'
