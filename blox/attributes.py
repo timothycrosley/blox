@@ -52,7 +52,7 @@ class NestedAttribute(AbstractAttribute):
         current_obj = obj
         for section in self.attribute[:-1]:
             current_obj = getattr(current_obj, section)
-        return setattr(current_obj, self.attribute[-1])
+        return setattr(current_obj, self.attribute[-1], value)
 
 
 class DirectAttribute(AbstractAttribute):
