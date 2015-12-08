@@ -19,6 +19,8 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
+import cgi
+
 
 class AbstractAttribute(object):
     '''Defines the abstract Blok attribute concept'''
@@ -81,13 +83,21 @@ class DirectAttribute(AbstractAttribute):
 
 class RenderedDirect(DirectAttribute):
     '''Defines a direct attribute that gets rendered as part of the start tag'''
+    __slots__ = ('safe', )
+
+    def __init__(self, signal=False, type=str, doc="", name=None, safe=False):
+        super().__init__(signal, type=type, doc=doc, name=name)
+        self.safe = safe
 
     def render_value(self, obj):
         return str(getattr(obj, self.object_attribute))
 
     def render(self, obj):
         if hasattr(obj, self.object_attribute):
-            return '{0}="{1}"'.format(self.name, self.render_value(obj))
+            value = self.render_value(obj)
+            if not self.safe:
+                value = cgi.escape(value)
+            return '{0}="{1}"'.format(self.name, value)
 
 
 class ListAttribute(RenderedDirect):

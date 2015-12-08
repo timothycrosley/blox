@@ -27,6 +27,7 @@ from connectable import Connectable
 from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute, IntegerAttribute, DirectAttribute
 
 from io import StringIO
+import cgi
 
 UNDERSCORE = (re.compile('(.)([A-Z][a-z]+)'), re.compile('([a-z0-9])([A-Z])'))
 
@@ -234,7 +235,8 @@ class AbstractTag(Blok):
         direct_attributes = (attribute.render(self) for attribute in self.render_attributes)
         attributes = ()
         if hasattr(self, '_attributes'):
-            attributes = ('{0}="{1}"'.format(key, value) for key, value in self.attributes.items() if value)
+            attributes = ('{0}="{1}"'.format(key, cgi.escape(value) if not getattr(value, 'safe', False) else value)
+                                             for key, value in self.attributes.items() if value)
 
         rendered_attributes = " ".join(filter(bool, chain(direct_attributes, attributes)))
         return '<{0}{1}{2}{3}>'.format(self.tag, ' ' if rendered_attributes else '',

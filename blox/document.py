@@ -20,10 +20,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
-                             IntegerAttribute, RenderedDirect, SetAttribute, NestedAttribute)
+                             IntegerAttribute, NestedAttribute, RenderedDirect, SetAttribute)
 from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren, Text
 from blox.builder import Factory
-from blox.dom import DocType, HTML
+from blox.dom import HTML, DocType
 
 factory = Factory("Document")
 
