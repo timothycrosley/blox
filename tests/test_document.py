@@ -19,11 +19,21 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
-import pytest
-
 from blox.document import Document
+from .test_base import TestBlox
 
 
-def test_blox():
+class TestDocument(TestBlox):
     '''Test to ensure blox works as expected'''
-    assert str(Document()) == '<!DOCTYPE html><html></html>'
+    testing = Document
+    expected_output = '<!DOCTYPE html><html>hi bacon</html>'
+
+    def test_autogeneration(self):
+        document = Document()
+        assert document.render() == '<!DOCTYPE html><html></html>'
+
+        document.head
+        assert document.render() == '<!DOCTYPE html><html><head></head></html>'
+        document.body
+        assert document.render() == '<!DOCTYPE html><html><head></head><body></body></html>'
+
