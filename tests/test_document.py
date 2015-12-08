@@ -1,8 +1,8 @@
-'''blox/dom.py
+"""tests/test_blox.py.
 
-Defines the basic HTML DOM elements as blox
+Tests the Python3 implementation of blox
 
-Copyright (C) 2015  Timothy Edmund Crosley
+Copyright (C) 2015 Timothy Edmund Crosley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -18,22 +18,12 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-'''
-from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
-                             IntegerAttribute, RenderedDirect, SetAttribute, NestedAttribute)
-from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren, Text
-from blox.builder import Factory
-from blox.dom import DocType, HTML
+"""
+import pytest
 
-factory = Factory("Document")
+from blox.document import Document
 
 
-@factory.add()
-class Document(Blox):
-    '''Defines the basic concept of full HTML document/page'''
-    __slots__ = ()
-    doc_type = BlokAttribute(DocType, init=True, position=0)
-    html = BlokAttribute(HTML, position=1, init=True)
-    head = NestedAttribute('html.head')
-    title = NestedAttribute('html.head.title.text')
-    body = NestedAttribute('html.body')
+def test_blox():
+    '''Test to ensure blox works as expected'''
+    assert str(Document()) == '<!DOCTYPE html><html></html>'
