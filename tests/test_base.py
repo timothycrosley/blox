@@ -28,9 +28,10 @@ class TestBlok(object):
     testing = Blok
     expected_output = ''
 
-    def __init__(self):
-        self.blok = self.testing()
-        self.modify()
+    @classmethod
+    def setup_class(cls):
+        cls.blok = cls.testing()
+        cls.modify(cls)
 
     def modify(self):
         '''Sub test classes can modify the blok here for testing, before all tests are ran'''
@@ -39,12 +40,14 @@ class TestBlok(object):
     def test_output(self):
         output = StringIO()
         self.blok.output(output)
-        assert str(output) == self.expected_output
+        output.seek(0)
+        assert output.read() == self.expected_output
 
     def test_render(self):
         output = StringIO()
         self.blok.output(output)
-        assert self.blok.render() == str(output)
+        output.seek(0)
+        assert self.blok.render() == output.read()
 
     def test_str(self):
         str(self.blok) == self.blok.render(formatted=True)
@@ -78,19 +81,20 @@ class TestBlox(TestBlok):
         assert self.bacon in self.blok
 
         for_testing = Text('for testing')
+        old_size = len(self.blok)
         self.blok += for_testing
-        assert self.blok[2] == for_testing
-        assert len(self.blok) == 2
+        assert self.blok[old_size] == for_testing
+        assert len(self.blok) == old_size + 1
         assert for_testing in self.blok
         self.blok -= for_testing
         assert not for_testing in self.blok
 
         self.blok += for_testing
-        del self.blok[2]
+        del self.blok[old_size]
         assert not for_testing in self.blok
 
         for blok in self.blok:
-            assert isinstance(blok, Text)
+            assert isinstance(blok, Blok)
 
 
 class TestTag(TestBlok):

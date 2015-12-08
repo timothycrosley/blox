@@ -166,7 +166,7 @@ class Blox(Blok):
         return self.blox.__iter__()
 
     def __contains__(self, blok):
-        return blok in self.bloks
+        return blok in self.blox
 
     def __getitem__(self, index):
         return self.blox[index]
@@ -228,7 +228,6 @@ class AbstractTag(Blok):
 
         return self._attributes
 
-
     @property
     def start_tag(self):
         '''Returns the elements HTML start tag'''
@@ -239,7 +238,7 @@ class AbstractTag(Blok):
 
         rendered_attributes = " ".join(filter(bool, chain(direct_attributes, attributes)))
         return '<{0}{1}{2}{3}>'.format(self.tag, ' ' if rendered_attributes else '',
-                                       rendered_attributes, '/' if self.tag_self_closes else "")
+                                       rendered_attributes, ' /' if self.tag_self_closes else "")
 
     @property
     def end_tag(self):
@@ -300,10 +299,7 @@ class TagWithChildren(Blox, AbstractTag):
             to.write(self.end_tag)
 
     def __contains__(self, attribute_or_blok):
-        if type(attribute_or_blok) == int:
-            return Blox.__contains__(self, attribute_or_blok)
-        else:
-            return AbstractTag.__contains__(self, attribute_or_blok)
+        return Blox.__contains__(self, attribute_or_blok) or AbstractTag.__contains__(self, attribute_or_blok)
 
     def __getitem__(self, attribute_or_blok):
         if type(attribute_or_blok) == int:
