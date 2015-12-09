@@ -129,13 +129,25 @@ class BlokAttribute(DirectAttribute):
 
     def __get__(self, obj, cls):
         if not hasattr(obj, self.object_attribute):
-            setattr(obj, self.object_attribute, obj(self.type(), getattr(self, 'position', None)))
+            add_object = self.type()
+            position = getattr(self, 'position', None)
+            if position is not None:
+                obj.blox.insert(position, add_object)
+            else:
+                obj.blox.append(add_object)
+            setattr(obj, self.object_attribute, add_object)
 
         return getattr(obj, self.object_attribute)
 
     def __set__(self, obj, value):
         self.__delete__(obj)
-        setattr(obj, self.object_attribute, obj(value, getattr(self, 'position', None)))
+        if not hasattr(obj, self.object_attribute):
+            position = getattr(self, 'position', None)
+            if position is not None:
+                obj.blox.insert(position, value)
+            else:
+                obj.blox.append(value)
+            setattr(obj, self.object_attribute, value)
         return value
 
     def __delete__(self, obj):

@@ -149,6 +149,11 @@ class Blox(Blok):
             self(blok)
 
     @property
+    def blox_container(self):
+        '''Returns the container that should be responsible adding children, outside of init'''
+        return self
+
+    @property
     def blox(self):
         '''Lazily creates and returns the list of child blox'''
         if not hasattr(self, '_blox'):
@@ -158,28 +163,28 @@ class Blox(Blok):
     def __call__(self, blok, position=None):
         '''Adds a nested blok to this blok'''
         if position is not None:
-            self.blox.insert(position, blok)
+            self.blox_container.blox.insert(position, blok)
         else:
-            self.blox.append(blok)
+            self.blox_container.blox.append(blok)
         return blok
 
     def __iter__(self):
-        return self.blox.__iter__()
+        return self.blox_container.blox.__iter__()
 
     def __contains__(self, blok):
-        return blok in self.blox
+        return blok in self.blox_container.blox
 
     def __getitem__(self, index):
-        return self.blox[index]
+        return self.blox_container.blox[index]
 
     def __setitem__(self, index, value):
-        self.blox.__setitem__(index, value)
+        self.blox_container.blox.__setitem__(index, value)
 
     def __delitem__(self, index):
-        return self.blox.__delitem__(index)
+        return self.blox_container.blox.__delitem__(index)
 
     def __isub__(self, blok):
-        self.blox.remove(blok)
+        self.blox_container.blox.remove(blok)
         return self
 
     def __iadd__(self, blok):
@@ -187,7 +192,7 @@ class Blox(Blok):
         return self
 
     def __len__(self):
-        return len(self.blox)
+        return len(self.blox_container.blox)
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''

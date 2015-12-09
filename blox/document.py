@@ -37,3 +37,7 @@ class Document(Blox):
     head = NestedAttribute('html.head')
     title = NestedAttribute('html.head.title.text')
     body = NestedAttribute('html.body')
+
+    @property
+    def blox_container(self):
+        return self.html.body
