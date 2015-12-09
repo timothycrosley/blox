@@ -26,7 +26,7 @@ from .test_base import TestBlox
 class TestDocument(TestBlox):
     '''Test to ensure blox works as expected'''
     testing = Document
-    expected_output = '<!DOCTYPE html><html></html>hi bacon'
+    expected_output = '<!DOCTYPE html><html><body>hi bacon</body></html>'
 
     def test_autogeneration(self):
         document = Document()
