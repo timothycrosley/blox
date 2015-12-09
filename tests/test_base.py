@@ -65,6 +65,11 @@ class TestText(TestBlok):
     def modify(self):
         self.blok.value = 'test text'
 
+    def test_change_text(self):
+        assert self.blok.value == 'test text'
+        self.blok('hi')
+        assert self.blok.value == 'hi'
+
 
 class TestBlox(TestBlok):
     testing = Blox
