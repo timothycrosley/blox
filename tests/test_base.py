@@ -75,10 +75,14 @@ class TestBlox(TestBlok):
     testing = Blox
     expected_output = 'hi bacon'
 
+    @classmethod
+    def setup_class(cls):
+        cls.hi = Text('hi')
+        cls.blok = cls.testing(cls.hi)
+        cls.modify(cls)
+
     def modify(self):
-        self.hi = Text('hi')
         self.bacon = Text(' bacon')
-        self.blok += self.hi
         self.blok += self.bacon
 
     def test_list_like(self):
@@ -100,6 +104,17 @@ class TestBlox(TestBlok):
 
         for blok in self.blok:
             assert isinstance(blok, Blok)
+
+    def test_insert(self):
+        additional_text = Text('more_text')
+        self.blok(additional_text, 0)
+        assert additional_text in self.blok
+
+    def test_set_item(self):
+        additional_text = Text('more_text')
+        self.blok[0] = additional_text
+        assert additional_text in self.blok
+        assert self.blok[0] == additional_text
 
 
 class TestTag(TestBlok):

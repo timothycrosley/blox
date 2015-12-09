@@ -36,4 +36,3 @@ class TestDocument(TestBlox):
         assert document.render() == '<!DOCTYPE html><html><head></head></html>'
         document.body
         assert document.render() == '<!DOCTYPE html><html><head></head><body></body></html>'
-
