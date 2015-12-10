@@ -20,6 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 """
 from blox.document import Document
+from blox.base import Text
 from .test_base import TestBlox
 
 
@@ -36,3 +37,6 @@ class TestDocument(TestBlox):
         assert document.render() == '<!DOCTYPE html><html><head></head></html>'
         document.body
         assert document.render() == '<!DOCTYPE html><html><head></head><body></body></html>'
+
+        document += Text('Hi')
+        assert document.render() == '<!DOCTYPE html><html><head></head><body>Hi</body></html>'
