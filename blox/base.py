@@ -128,12 +128,20 @@ class Text(Blok):
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs the set text'''
-        to.write(self._value)
+        to.write(cgi.escape(self._value))
 
     def __call__(self, text):
         '''Updates the text value'''
         self.value = text
         return self
+
+
+class SafeText(Text):
+    '''Defines text that is guaranteed to be safe, and doesn't need escapped'''
+
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs the set text'''
+        to.write(self._value)
 
 
 class Blox(Blok):
