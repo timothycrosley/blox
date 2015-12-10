@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from blox.base import Blok, Invalid, Text, Blox, Tag, NamedTag, TagWithChildren
+from blox.base import Blok, Invalid, Text, Blox, Tag, NamedTag, TagWithChildren, SafeText
 from io import StringIO
 
 
@@ -69,6 +69,18 @@ class TestText(TestBlok):
         assert self.blok.value == 'test text'
         self.blok('hi')
         assert self.blok.value == 'hi'
+
+    def test_special_characters(self):
+        self.blok('<hi')
+        assert self.blok.render() == '&lt;hi'
+
+
+class TestSafeText(TestText):
+    testing = SafeText
+
+    def test_special_characters(self):
+        self.blok('<hi')
+        assert self.blok.render() == '<hi'
 
 
 class TestBlox(TestBlok):
