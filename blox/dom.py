@@ -45,7 +45,7 @@ class DocType(Blok):
             self.emit('type_changed', type)
             self._type = type
 
-    def output(self, to=None, *args, **kwargs):
+    def output(self, to=None, formatted=False, *args, **kwargs):
         '''Outputs the set text'''
         to.write('<!DOCTYPE {0}>'.format(self.type))
 

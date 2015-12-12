@@ -153,6 +153,7 @@ class BlokAttribute(DirectAttribute):
     def __delete__(self, obj):
         if hasattr(obj, self.object_attribute):
             obj.blox.remove(getattr(obj, self.object_attribute))
+            delattr(obj, self.object_attribute)
 
 
 class Attribute(AbstractAttribute):

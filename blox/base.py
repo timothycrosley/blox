@@ -98,6 +98,12 @@ class Blok(Connectable, metaclass=TagAttributes):
     def __str__(self):
         return self.render(formatted=True)
 
+    def __repr_self__(self, identifiers=()):
+        return "{0}({1})".format(self.__class__.__name__, " ".join(identifiers))
+
+    def __repr__(self):
+        return self.__repr_self__()
+
 
 class Invalid(Blok):
     '''Defines how the lack of a vaild Blok should be rendered'''
@@ -128,7 +134,7 @@ class Text(Blok):
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs the set text'''
-        to.write(cgi.escape(self._value))
+        to.write(cgi.escape(self._value) if not getattr(self._value, 'safe', False) else value)
 
     def __call__(self, text):
         '''Updates the text value'''
@@ -202,10 +208,26 @@ class Blox(Blok):
     def __len__(self):
         return len(self.blox_container.blox)
 
-    def output(self, to=None, *args, **kwargs):
+    def __repr__(self):
+        representation = [self.__repr_self__()]
+        for child in self:
+            for index, line in enumerate(repr(child).split("\n")):
+                representation.append(("|---" if index == 0 else "|  ") + line)
+        return "\n".join(representation)
+
+    def output(self, to=None, formatted=False, indent=0, indentation='  ', *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
-        for blok in self.blox:
-            blok.output(to=to, *args, **kwargs)
+        if formatted and self.blox:
+            self.blox[0].output(to=to, formatted=True, indent=indent, indentation=indentation, *args, **kwargs)
+            for blok in self.blox[1:]:
+                to.write('\n')
+                to.write(indent * indentation)
+                blok.output(to=to, formatted=True, indent=indent, indentation=indentation, *args, **kwargs)
+            if not indent:
+                to.write('\n')
+        else:
+            for blok in self.blox:
+                blok.output(to=to, *args, **kwargs)
 
 
 class AbstractTag(Blok):
@@ -281,6 +303,11 @@ class AbstractTag(Blok):
     def __delitem__(self, attribute):
         del self.attributes[attribute]
 
+    def __repr_self__(self, identifiers=()):
+        if getattr(self, '_id', None):
+            identifiers = ('id="{0}"'.format(self.id), ) + identifiers
+        return super().__repr_self__(identifiers)
+
 
 class Tag(AbstractTag):
     '''A Blok that renders a single tag'''
@@ -291,6 +318,11 @@ class NamedTag(Tag):
     '''A Tag with an attached name'''
     __slots__ = ('_name', )
     name = RenderedDirect()
+
+    def __repr_self__(self, identifiers=()):
+        if getattr(self, '_name', None):
+            identifiers += ('name="{0}"'.format(self.name), )
+        return super().__repr_self__(identifiers)
 
 
 class TagWithChildren(Blox, AbstractTag):
@@ -305,12 +337,26 @@ class TagWithChildren(Blox, AbstractTag):
             self(blok)
         self.attributes.update(attributes)
 
-    def output(self, to=None, *args, **kwargs):
+    def output(self, to=None, formatted=False, indent=0, indentation='  ', *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
-        to.write(self.start_tag)
-        if not self.tag_self_closes:
-            for blok in self.blox:
-                blok.output(to=to, *args, **kwargs)
+        if formatted:
+            to.write(self.start_tag)
+            to.write('\n')
+            if not self.tag_self_closes:
+                for blok in self.blox:
+                    to.write(indentation * (indent + 1))
+                    blok.output(to=to, indent=indent + 1, formatted=True, indentation=indentation, *args, **kwargs)
+                    to.write('\n')
+
+            to.write(indentation * indent)
+            to.write(self.end_tag)
+            if not indentation:
+                to.write('\n')
+        else:
+            to.write(self.start_tag)
+            if not self.tag_self_closes:
+                for blok in self.blox:
+                    blok.output(to=to, *args, **kwargs)
             to.write(self.end_tag)
 
     def __contains__(self, attribute_or_blok):
@@ -333,3 +379,20 @@ class TagWithChildren(Blox, AbstractTag):
             return Blox.__delitem__(self, attribute_or_blok)
         else:
             return AbstractTag.__delitem__(self, attribute_or_blok)
+
+
+class safe(object):
+    '''Wrap any str-able object in this to explicity mark it's output as safe'''
+    __slots__ = ('value', )
+    safe = True
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return str(self.value)
+
+
+class safestr(str):
+    '''Creates a string that is explicity marked as safe'''
+    safe = True
