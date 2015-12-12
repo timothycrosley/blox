@@ -134,7 +134,7 @@ class Text(Blok):
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs the set text'''
-        to.write(cgi.escape(self._value) if not getattr(self._value, 'safe', False) else value)
+        to.write(cgi.escape(self._value) if not getattr(self._value, 'safe', False) else self._value)
 
     def __call__(self, text):
         '''Updates the text value'''
