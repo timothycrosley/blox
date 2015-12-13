@@ -26,4 +26,4 @@ from blox.dom import B
 
 def test_blox():
     '''Test to ensure blox works as expected'''
-    assert str(B()) == "<b></b>"
+    assert str(B()) == "<b>\n</b>"
