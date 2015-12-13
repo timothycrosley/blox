@@ -134,7 +134,7 @@ class Text(Blok):
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs the set text'''
-        to.write(cgi.escape(self._value) if not getattr(self._value, 'safe', False) else self._value)
+        to.write(str(self._value))
 
     def __call__(self, text):
         '''Updates the text value'''
@@ -142,12 +142,12 @@ class Text(Blok):
         return self
 
 
-class SafeText(Text):
-    '''Defines text that is guaranteed to be safe, and doesn't need escapped'''
+class UnsafeText(Text):
+    '''Defines text that comes from an untrusted source, and should therefore be escaped'''
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs the set text'''
-        to.write(self._value)
+        to.write(cgi.escape(str(self._value)))
 
 
 class Blox(Blok):
@@ -270,7 +270,7 @@ class AbstractTag(Blok):
         direct_attributes = (attribute.render(self) for attribute in self.render_attributes)
         attributes = ()
         if hasattr(self, '_attributes'):
-            attributes = ('{0}="{1}"'.format(key, cgi.escape(value) if not getattr(value, 'safe', False) else value)
+            attributes = ('{0}="{1}"'.format(key, value)
                                              for key, value in self.attributes.items() if value)
 
         rendered_attributes = " ".join(filter(bool, chain(direct_attributes, attributes)))
@@ -381,8 +381,8 @@ class TagWithChildren(Blox, AbstractTag):
             return AbstractTag.__delitem__(self, attribute_or_blok)
 
 
-class safe(object):
-    '''Wrap any str-able object in this to explicity mark it's output as safe'''
+class unsafe(object):
+    '''Wrap any str-able object in this to explicity mark it's output as unsafe'''
     __slots__ = ('value', )
     safe = True
 
@@ -390,9 +390,11 @@ class safe(object):
         self.value = value
 
     def __str__(self):
-        return str(self.value)
+        return cgi.escape(str(self.value))
 
 
-class safestr(str):
-    '''Creates a string that is explicity marked as safe'''
-    safe = True
+class unsafe_str(str):
+    '''Creates a string that is explicity marked as unsafe'''
+
+    def __str__(self):
+        return cgi.escape(super().__str__())

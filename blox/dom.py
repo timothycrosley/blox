@@ -21,7 +21,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
                              IntegerAttribute, RenderedDirect, SetAttribute)
-from blox.base import Blok, NamedTag, Tag, TagWithChildren, Text, SafeText
+from blox.base import Blok, NamedTag, Tag, TagWithChildren, Text
 from blox.builder import Factory
 
 factory = Factory('dom')
@@ -802,7 +802,7 @@ class Script(TagWithChildren):
     type = Attribute()
     charset = Attribute()
     src = Attribute()
-    code = BlokAttribute(SafeText)
+    code = BlokAttribute(Text)
 
 
 @factory.add()
