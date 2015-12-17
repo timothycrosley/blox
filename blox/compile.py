@@ -46,3 +46,6 @@ def build(factory):
     %(buildTemplate)s
 
     return template"""
+
+class CompiledTemplate(object):
+    __slots__ = ('execNamespace', 'factory')
