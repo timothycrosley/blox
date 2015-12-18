@@ -47,5 +47,10 @@ def build(factory):
 
     return template"""
 
+
 class CompiledTemplate(object):
     __slots__ = ('execNamespace', 'factory')
+
+
+def to_python(template, factory=Factory):
+    pass
