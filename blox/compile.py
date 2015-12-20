@@ -73,29 +73,25 @@ class CompiledTemplate(object):
         exec(code, name_space)
         return CompiledTemplate(name_space, factory)
 
-def to_python(template, factory=factory, indent=1, indentation='    '):
-    python = ""
-    if elements_used is None:
-        elements_used = set()
-    if accessors_used is None:
-        accessors_used = set()
-    if cache_elements is None:
-        cache_elements = set()
-    if static_elements is None:
-        static_elements = set()
-    if not parent_node:
-        parent_node = "template"
+def to_python(template, factory=factory, indent=0, indentation='    '):
+    python = []
+    elements_used = set()
+    accessors_used = set()
+    cache_elements = set()
+    static_elements = set()
+    instance = 0
+    parent_node = "template"
 
-    indented = INDENT * indent
-    newNode = "element" + str(instance)
-    instance += 1
-    if type(template) in (str, unicode):
+    def _render(template):
         if not template:
-            instance -= 1
-            return ("", instance)
-        python += "\n%s%s = %s.add(" % (indented, newNode, parent_node)
-        python += 'Text("' + template + '"), ensureUnique=False)'
-        return (python, instance)
+            return
+
+        instance += 1
+        new_node = "element" + str(instance)
+        if type(template) in (str, unicode):
+            python.append("\n%s%s = %s.add(" % (indented, newNode, parent_node))
+            python.append('Text("' + template + '"), ensureUnique=False)')
+
 
     (accessor, id, name, create, properties, children) = (template.accessor, template.id, template.name,
                                                           template.create, template.properties, template.childElements)
