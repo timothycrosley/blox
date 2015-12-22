@@ -21,6 +21,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.base import Blox, Text, UnsafeText
 from blox.all import factory
+from xml.dom import minidom
+
 
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
@@ -186,3 +188,16 @@ def to_python(template, factory=factory, indent=0, indentation='    '):
 
 
         return (python, instance)
+
+
+def _parse(dom, factory=factory):
+    '''Creates code to create a Blox representation based on the passed in minidom'''
+    code = []
+    def pase_node(node):
+        if isinstance(node, minidom.Text):
+            value = node.nodeValue.strip()
+
+
+def html(html):
+    from lxml.etree import HTMLParser, parse
+    root = parse(html)
