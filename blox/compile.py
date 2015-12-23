@@ -201,3 +201,5 @@ def _parse(dom, factory=factory):
 def html(html):
     from lxml.etree import HTMLParser, parse
     root = parse(html)
+    [_parse(element) for element in root]
+
