@@ -28,7 +28,7 @@ from blox.dom import HTML, DocType
 factory = Factory("Document")
 
 
-@factory.add()
+@factory.add('document', 'html')
 class Document(Blox):
     '''Defines the basic concept of full HTML document/page'''
     __slots__ = ()

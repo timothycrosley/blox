@@ -32,10 +32,14 @@ class Factory(object):
         self.name = name
         self.default = default
 
-    def add(self, name=None):
+    def add(self, *names):
         '''Returns back a class decorator that enables registering Blox to this factory'''
+        if not names:
+            names = (blok.__name__, )
+
         def decorator(blok):
-            self.products[(name or blok.__name__).lower()] = blok
+            for name in names:
+                self.products[(name).lower()] = blok
             return blok
         return decorator
 

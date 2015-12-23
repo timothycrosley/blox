@@ -1061,7 +1061,6 @@ class Wbr(TagWithChildren):
     tag = "wbr"
 
 
-@factory.add()
 class HTML(TagWithChildren):
     '''Defines the root of an HTML document'''
     __slots__ = ()
