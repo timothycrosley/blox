@@ -41,7 +41,7 @@ class Factory(object):
 
         def decorator(blok):
             for name in names:
-                self[(name).lower()] = blok
+                self[name] = blok
             return blok
         return decorator
 
