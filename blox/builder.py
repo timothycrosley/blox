@@ -41,7 +41,7 @@ class Factory(object):
 
         def decorator(blok):
             for name in names:
-                self.products[(name).lower()] = blok
+                self[(name).lower()] = blok
             return blok
         return decorator
 
@@ -51,6 +51,9 @@ class Factory(object):
 
     def __getitem__(self, product_name):
         return self.producs[self.normalize(product_name)]
+
+    def __setitem__(self, product_name, product):
+        return self.products[self.normalize(product_name)] = product
 
     def get(self, product_name, default=None):
         return self.products.get(self.normalize(product_name), default)
