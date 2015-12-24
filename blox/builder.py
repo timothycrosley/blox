@@ -55,6 +55,9 @@ class Factory(object):
     def __setitem__(self, product_name, product):
         return self.products[self.normalize(product_name)] = product
 
+    def __contains__(self, product_name):
+        return self.normalize(product_name) in self.products
+
     def get(self, product_name, default=None):
         return self.products.get(self.normalize(product_name), default)
 
