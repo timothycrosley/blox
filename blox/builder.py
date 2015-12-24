@@ -22,6 +22,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.base import Invalid
 
+_normalized = str.maketrans('', '', '-_:')
+
 
 class Factory(object):
     '''Defines a Blok factory that can be used to build new Blox based on only the name and attributes of the Blok'''
@@ -43,9 +45,19 @@ class Factory(object):
             return blok
         return decorator
 
-    def __call__(self, blok_name, **properties):
+    def __call__(self, product_name, **properties):
         '''Builds and returns a Blok object'''
-        return self.products.get(blok_name.lower(), None)(**properties)
+        return self.get(product_name)(**properties)
+
+    def __getitem__(self, product_name):
+        return self.producs[self.normalize(product_name)]
+
+    def get(self, product_name, default=None):
+        return self.products.get(self.normalize(product_name), default)
+
+    @staticmethod
+    def normalize(product_name):
+        return product_name.lower().translate(normalized)
 
 
 class Composite(Factory):
