@@ -20,7 +20,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-from blox.base import Invalid
+from blox.base import Wildcard
 
 _normalized = str.maketrans('', '', '-_:')
 
@@ -29,7 +29,7 @@ class Factory(object):
     '''Defines a Blok factory that can be used to build new Blox based on only the name and attributes of the Blok'''
     __slots__ = ('name', 'default', 'products')
 
-    def __init__(self, name="", default=Invalid):
+    def __init__(self, name="", default=Wildcard):
         self.products = {}
         self.name = name
         self.default = default
@@ -47,7 +47,9 @@ class Factory(object):
 
     def __call__(self, product_name, **properties):
         '''Builds and returns a Blok object'''
-        return self.get(product_name)(**properties)
+        if not product_name in self:
+            return self.default(tag=product_name, **properties)
+        return self[product_name](**properties)
 
     def __getitem__(self, product_name):
         return self.producs[self.normalize(product_name)]
@@ -59,7 +61,7 @@ class Factory(object):
         return self.normalize(product_name) in self.products
 
     def get(self, product_name, default=None):
-        return self.products.get(self.normalize(product_name), default)
+        return self.products.get(self.normalize(product_name), self.default if default is None else default)
 
     @staticmethod
     def normalize(product_name):
@@ -69,8 +71,8 @@ class Factory(object):
 class Composite(Factory):
     '''Enables combining multiple Factory into a single one that contains all Elements of both'''
 
-    def __init__(self, factories):
-        super().__init__()
+    def __init__(self, factories, name="", default=Wildcard):
+        super().__init__(name=name, default=default)
         for factory in factories:
             self.products.update(factory.products)
             if factory.name:

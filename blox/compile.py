@@ -45,15 +45,14 @@ def to_python(dom, factory):
     current = 0
     def increment(element_name=''):
         current += 1
-        return ('{0}{1}'.format(element_name, current), factory[element_name])
+        return ('{0}{1}'.format(element_name, current), factory.get(element_name))
 
     lines = []
     accessors = []
     parent = 'template'
     def compile_node(node):
-        if node.tag in factory:
-            blok_name, blok = increment(node.tag)
-            lines += "{0} = factory('{1}')".format(blok_name, blok.__name__)
+        blok_name, blok = increment(node.tag)
+        lines += "{0} = factory('{1}')".format(blok_name, node.tag)
 
 
 

@@ -45,6 +45,7 @@ class TagAttributes(type):
                 full_attributes.update(attributes)
                 attributes = full_attributes
 
+            blok_attributes = []
             render_attributes = []
             direct_attributes = []
             init_attributes = []
@@ -59,6 +60,8 @@ class TagAttributes(type):
                         attribute.object_attribute = '_{0}'.format(attribute_name)
                     if getattr(attribute, 'init', False):
                         init_attributes.append(attribute_name)
+                    if isinstance(attribute, BlokAttribute) and attribute.type.tag:
+                        blok_attributes[attribute.type.tag] = attribute_name
 
             if direct_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
                 class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in direct_attributes)
@@ -72,6 +75,13 @@ class TagAttributes(type):
                 if hasattr(parents[0], 'init_attributes'):
                     init_attributes = list(parents[0].init_attributes) + init_attributes
                 class_dict['init_attributes'] = init_attributes
+
+            if blok_attributes:
+                if hasattr(parents[0], 'blok_attributes'):
+                    full_blok_attributes = dict(parents[0].blok_attributes)
+                    full_blok_attributes.update(blok_attributes)
+                    blok_attributes = full_blok_attributes
+                class_dict['blok_attributes'] = blok_attributes
 
             class_dict['attribute_descriptors'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
@@ -379,6 +389,14 @@ class TagWithChildren(Blox, AbstractTag):
             return Blox.__delitem__(self, attribute_or_blok)
         else:
             return AbstractTag.__delitem__(self, attribute_or_blok)
+
+
+class Wildcard(TagWithChildren):
+    '''Can represent any element that does not have a built in representation, not very efficient'''
+    __slots__ = ('tag', )
+
+    def __init__(self, tag, *kargs, **kwargs):
+        self.tag = tag
 
 
 class unsafe(object):
