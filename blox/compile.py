@@ -49,10 +49,15 @@ def to_python(dom, factory):
 
     lines = []
     accessors = []
-    parent = 'template'
-    def compile_node(node):
+    def compile_node(node, parent='template'):
         blok_name, blok = increment(node.tag)
-        lines += "{0} = factory('{1}')".format(blok_name, node.tag)
+        lines += "{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag)
+        for child_node in node:
+            if child_node.tag in blok.blok_attributes:
+                # special handling
+            else:
+                compile_node(child_node, parent=blok_name)
+
 
 
 
