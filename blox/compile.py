@@ -54,7 +54,9 @@ def to_python(dom, factory):
         lines += "{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag)
         for child_node in node:
             if child_node.tag in blok.blok_attributes:
-                compile_node(child_node, parent="{0}.{1}".format(blok_name, blok.blok_attributes[child_node.tag].name))
+                attached_child = "{0}.{1}".format(blok_name, blok.blok_attributes[child_node.tag].name)
+                for nested_child_node in child_node:
+                    compile_node(nested_child_node, parent=attached_child))
             else:
                 compile_node(child_node, parent=blok_name)
 
