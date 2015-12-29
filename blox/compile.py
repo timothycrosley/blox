@@ -63,6 +63,9 @@ def to_python(dom, factory=factory, indent='    '):
     lines = []
     accessors = []
     def compile_node(node, parent='template'):
+        print(node.tag)
+        if node.tag == 'title':
+            import ipdb;ipdb.set_trace()
         blok_name, blok = increment(node.tag)
         lines.append("{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag))
 
@@ -81,10 +84,17 @@ def to_python(dom, factory=factory, indent='    '):
                 lines.apppend('{0}.{1} = {2}'.format(parent, attribute_value, blok_name))
 
         for child_node in node:
+            print(node.tag + " > " + child_node.tag)
             if child_node.tag in getattr(blok, 'blok_attributes', {}):
                 attached_child = "{0}.{1}".format(blok_name, blok.blok_attributes[child_node.tag].name)
                 for nested_child_node in child_node:
                     compile_node(nested_child_node, parent=attached_child)
+                attached_text = (child_node.text or "").strip().replace('"', '\\"')
+                if attached_text:
+                    if hasattr(blok.blok_attributes[child_node.tag].type, 'text'):
+                        lines.append('{0}.text = "{1}"'.format(attached_child, attached_text))
+                    else:
+                        lines.append('{0}(Text("{1}"))'.format(attached_child, attached_text))
             else:
                 compile_node(child_node, parent=blok_name)
 
