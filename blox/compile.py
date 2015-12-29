@@ -63,7 +63,6 @@ def to_python(dom, factory=factory, indent='    '):
     lines = []
     accessors = []
     def compile_node(node, parent='template'):
-        print(node.tag)
         if node.tag == 'title':
             import ipdb;ipdb.set_trace()
         blok_name, blok = increment(node.tag)
@@ -84,7 +83,6 @@ def to_python(dom, factory=factory, indent='    '):
                 lines.apppend('{0}.{1} = {2}'.format(parent, attribute_value, blok_name))
 
         for child_node in node:
-            print(node.tag + " > " + child_node.tag)
             if child_node.tag in getattr(blok, 'blok_attributes', {}):
                 attached_child = "{0}.{1}".format(blok_name, blok.blok_attributes[child_node.tag].name)
                 for nested_child_node in child_node:
