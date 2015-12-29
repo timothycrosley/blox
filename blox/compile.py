@@ -91,7 +91,7 @@ def to_python(dom, factory=factory, indent='    '):
                     compile_node(nested_child_node, parent=attached_child)
                 attached_text = (child_node.text or "").strip().replace('"', '\\"')
                 if attached_text:
-                    if hasattr(blok.blok_attributes[child_node.tag].type, 'text'):
+                    if 'text' in dir(blok.blok_attributes[child_node.tag].type):
                         lines.append('{0}.text = "{1}"'.format(attached_child, attached_text))
                     else:
                         lines.append('{0}(Text("{1}"))'.format(attached_child, attached_text))
