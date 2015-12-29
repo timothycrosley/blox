@@ -19,18 +19,31 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
+import json
 from blox.base import Blox, Text, UnsafeText
 from blox.all import factory
 from xml.dom import minidom
 from lxml.etree import HTMLParser, parse, fromstring
 
-
 parser = HTMLParser()
+SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
+from blox.base import Blox, Text, UnsafeText
+
+
+class Template(Blox):
+{indent}__slots__ = tuple({accessors})
+
+
+def build(factory):
+{indent}template = Template()
+{indent}{build_steps}
+{indent}return template
+"""
 
 
 def from_file(file_object):
-    return parse(file_object, parser=parer).getroot()
+    return parse(file_object, parser=parser).getroot()
 
 
 def from_filename(file_name):
@@ -41,207 +54,44 @@ def from_string(html):
     return fromstring(html)
 
 
-def to_python(dom, factory):
-    current = 0
+def to_python(dom, factory=factory, indent='    '):
+    current = [0]
     def increment(element_name=''):
-        current += 1
-        return ('{0}{1}'.format(element_name, current), factory.get(element_name))
+        current[0] += 1
+        return ('{0}{1}'.format(element_name, current[0]), factory.get(element_name))
 
     lines = []
     accessors = []
     def compile_node(node, parent='template'):
         blok_name, blok = increment(node.tag)
-        lines += "{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag)
+        lines.append("{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag))
+
+        text = (node.text or "").strip().replace('"', '\\"')
+        if text:
+            if hasattr(blok, 'text'):
+                lines.append('{0}.text = "{1}"'.format(blok_name, text))
+            else:
+                lines.append('{0}(Text("{1}"))'.format(blok_name, text))
+
+        for attribute_name, attribute_value in node.items():
+            lines.append('{0}["{1}"] = "{2}"'.format(blok_name, attribute_name.replace('"', '\\"'),
+                                                     attribute_value.replace('"', '\\"')))
+            if attribute_name == 'accessor':
+                accessors.append(attribute_value)
+                lines.apppend('{0}.{1} = {2}'.format(parent, attribute_value, blok_name))
+
         for child_node in node:
-            if child_node.tag in blok.blok_attributes:
+            if child_node.tag in getattr(blok, 'blok_attributes', {}):
                 attached_child = "{0}.{1}".format(blok_name, blok.blok_attributes[child_node.tag].name)
                 for nested_child_node in child_node:
-                    compile_node(nested_child_node, parent=attached_child))
+                    compile_node(nested_child_node, parent=attached_child)
             else:
                 compile_node(child_node, parent=blok_name)
 
-
-
-
-
-
-
-#SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
-
-#from blox.base import Blox, Text, UnsafeText
-
-#elementsExpanded = False
-#%(cache_elements)s
-#%(static_elements)s
-
-
-#class Template(Blox):
-    #__slots__ = %(accessors)s
-
-
-#def build(factory):
-    #template = Template()
-
-    #global elementsExpanded
-    #if not elementsExpanded:
-        #products = factory.products
-        #%(defineElements)s
-        #elementsExpanded = True
-    #%(buildTemplate)s
-
-    #return template"""
-
-
-#class CompiledTemplate(object):
-    #__slots__ = ('exec_namespace', 'factory')
-
-    #def __init__(self, exec_namespace, factory):
-        #self.exec_namespace = exec_namespace
-        #self.factory = factory
-
-    #def build(self, factory=None):
-        #"""
-            #Returns a Node representation of the template using the specified factory.
-        #"""
-        #factory = factory or self.factory
-        #return self.exec_namespace['build'](factory)
-
-    #@classmethod
-    #def create(self, template, factory=factory):
-        #"""
-            #Compiles a template in the current python runtime into optimized python bytecode using compile and exec
-            #returns a CompiledTemplate instance.
-        #"""
-        #code = compile(to_python(template, factory), '<string>', 'exec')
-        #name_space = {}
-        #exec(code, name_space)
-        #return CompiledTemplate(name_space, factory)
-
-#def to_python(template, factory=factory, indent=0, indentation='    '):
-    #python = []
-    #elements_used = set()
-    #accessors_used = set()
-    #instance = 0
-    #parent_node = "template"
-
-    #def _render(template):
-        #if not template:
-            #return
-
-        #indented = indentation * indent
-        #instance += 1
-        #new_node = "element" + str(instance)
-        #if type(template) in (str, unicode):
-            #python.append("\n%s%s = %s(" % (indented, newNode, parent_node))
-            #python.append('Text("' + template + '"))')
-
-
-
-        #(accessor, id, name, create, properties, children) = (template.accessor,
-                                                              #template.id, template.name,
-                                                              #template.create, template.properties, template.childElements)
-        #elements_used.add(create)
-
-        #element = factory.products[create]
-        #create = create.replace("-", "_")
-        #if create in ("and", "or", "with", "if", "del", "template"):
-            #create = "_" + create
-
-        #accessor = accessor or id
-        #if accessor:
-            #accessor = accessor.replace("-", "_")
-
-        #python += '\n{indented}{1} = {2}(id={3}, name={4}, parent={5})'.format(
-                    #(indented, newNode, create.lower(), repr(id),
-                                                                #repr(name), parent_node)
-        #for name, value in properties:
-            #if value is not None and name in element.properties:
-                #propertyDict = element.properties[name]
-                #propertyActions = propertyDict['action'].split('.')
-                #propertyAction = propertyActions.pop(-1)
-                #if propertyActions:
-                    #propertyActions = "." + ".".join(propertyActions)
-                #else:
-                    #propertyActions = ""
-                #propertyName = propertyDict.get('name', name)
-
-                #if propertyAction == "classAttribute":
-                    #python += "\n%s%s%s.%s = %s" % (indented, newNode, propertyActions, propertyName, repr(value))
-                #elif propertyAction == "attribute":
-                    #python += "\n%s%s%s.attributes[%s] = %s" % (indented, newNode, propertyActions, repr(propertyName),
-                                                                #repr(value))
-                #elif propertyAction == "javascriptEvent":
-                    #python += "\n%s%s%s.addJavascriptEvent(%s, %s)" % (indented, newNode, propertyActions,
-                                                                    #repr(propertyName), repr(value))
-                #elif propertyAction == "call":
-                    #if value:
-                        #python += "\n%s%s%s.%s()" % (indented, newNode, propertyActions, propertyName)
-                #elif propertyAction == "send":
-                    #python += "\n%s%s%s.%s(%s, %s)" % (indented, newNode, propertyActions,
-                                                                    #propertyName, repr(name), repr(value))
-                #elif propertyAction == "addClassesFromString":
-                    #python += "\n%s%s%s.addClasses(%s)" % (indented, newNode, propertyActions,
-                                                        #repr(tuple(value.split(" "))))
-                #elif propertyAction == "setStyleFromString":
-                    #python += "\n%s%s%s.style.update(%s)" % (indented, newNode, propertyActions,
-                                                            #repr(StyleDict.fromString(value)))
-                #else:
-                    #python += "\n%s%s%s.%s(%s)" % (indented, newNode, propertyActions, propertyAction, repr(value))
-
-        #if accessor:
-            #accessors_used.add(accessor)
-            #python += "\n%stemplate.%s = %s" % (indented, accessor, newNode)
-
-        #if children:
-            #if isCached:
-                #childAccessors = set()
-                #childIndent = indent + 1
-            #else:
-                #childAccessors = accessors_used
-                #childIndent = indent
-            #for node in children:
-                #(childPython, instance) = __createPythonFromTemplate(node, factory, newNode, instance, elements_used,
-                                                                #childAccessors, cache_elements, static_elements, childIndent)
-                #python += childPython
-            #if isCached:
-                #if childAccessors:
-                    #accessors_used.update(childAccessors)
-                    #python += "\n%selse:" % indented
-                    #for accessor in childAccessors:
-                        #python += "\n%stemplate.%s = %s" % (indented + INDENT, accessor, newNode)
-
-
-        #python += "\n%s%s.add(%s, ensureUnique=False)" % (indented, parent_node, newNode)
-        #if parent_node == "template":
-            #defineElements = ""
-            #for elementName in elements_used:
-                #variableName = elementName.replace("-", "_")
-                #if variableName in ("and", "or", "with", "if", "del", "template"):
-                    #variableName = "_" + variableName
-                #defineElements += "globals()['%s'] = products['%s']\n%s" % (variableName, elementName, INDENT * 2)
-
-            #cacheDefinitions = ""
-            #for elementName in cache_elements:
-                #cacheDefinitions += "%s = CacheElement()\n" % elementName
-
-            #return SCRIPT_TEMPLATE % {'accessors':tuple(accessors_used), 'buildTemplate':python,
-                                    #'defineElements':defineElements, 'cache_elements':cacheDefinitions,
-                                    #'static_elements':"\n".join(static_elements)}
-
-
-        #return (python, instance)
-
-
-#def _parse(dom, factory=factory):
-    #'''Creates code to create a Blox representation based on the passed in minidom'''
-    #code = []
-    #def pase_node(node):
-        #if isinstance(node, minidom.Text):
-            #value = node.nodeValue.strip()
-
-
-#def html(html):
-    #from lxml.etree import HTMLParser, parse
-    #root = parse(html)
-    #[_parse(element) for element in root]
-
+            tail = (child_node.tail or "").strip().replace('"', '\\"')
+            if tail:
+                lines.append('{0}(Text("{1}"))'.format(blok_name, tail))
+    compile_node(dom)
+    return SCRIPT_TEMPLATE.format(accessors=json.dumps(accessors),
+                                  build_steps="\n{indent}".join(lines).format(indent=indent),
+                                  indent=indent)

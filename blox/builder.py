@@ -36,11 +36,8 @@ class Factory(object):
 
     def add(self, *names):
         '''Returns back a class decorator that enables registering Blox to this factory'''
-        if not names:
-            names = (blok.__name__, )
-
         def decorator(blok):
-            for name in names:
+            for name in names or (blok.__name__, ):
                 self[name] = blok
             return blok
         return decorator
@@ -52,10 +49,10 @@ class Factory(object):
         return self[product_name](**properties)
 
     def __getitem__(self, product_name):
-        return self.producs[self.normalize(product_name)]
+        return self.products[self.normalize(product_name)]
 
     def __setitem__(self, product_name, product):
-        return self.products[self.normalize(product_name)] = product
+        self.products[self.normalize(product_name)] = product
 
     def __contains__(self, product_name):
         return self.normalize(product_name) in self.products
@@ -65,7 +62,7 @@ class Factory(object):
 
     @staticmethod
     def normalize(product_name):
-        return product_name.lower().translate(normalized)
+        return product_name.lower().translate(_normalized)
 
 
 class Composite(Factory):

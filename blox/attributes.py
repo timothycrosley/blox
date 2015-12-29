@@ -164,7 +164,7 @@ class Attribute(AbstractAttribute):
         return obj.attributes[self.name]
 
     def __set__(self, obj, value):
-        if self.signal and not self.name in obj.attributes or obj.attributes[self.name] != value:
+        if self.signal and (self.name not in obj.attributes or obj.attributes[self.name] != value):
             obj.emit(self.signal, value)
         obj.attributes[self.name] = value
 

@@ -24,7 +24,8 @@ import re
 from itertools import chain
 
 from connectable import Connectable
-from blox.attributes import AbstractAttribute, Attribute, RenderedDirect, SetAttribute, BooleanAttribute, IntegerAttribute, DirectAttribute
+from blox.attributes import (AbstractAttribute, Attribute, RenderedDirect, SetAttribute,
+                             BooleanAttribute, IntegerAttribute, DirectAttribute, BlokAttribute)
 
 from io import StringIO
 import cgi
@@ -45,7 +46,7 @@ class TagAttributes(type):
                 full_attributes.update(attributes)
                 attributes = full_attributes
 
-            blok_attributes = []
+            blok_attributes = {}
             render_attributes = []
             direct_attributes = []
             init_attributes = []
@@ -60,8 +61,8 @@ class TagAttributes(type):
                         attribute.object_attribute = '_{0}'.format(attribute_name)
                     if getattr(attribute, 'init', False):
                         init_attributes.append(attribute_name)
-                    if isinstance(attribute, BlokAttribute) and attribute.type.tag:
-                        blok_attributes[attribute.type.tag] = attribute_name
+                    if isinstance(attribute, BlokAttribute) and hasattr(attribute.type, 'tag'):
+                        blok_attributes[attribute.type.tag] = attribute
 
             if direct_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
                 class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in direct_attributes)
@@ -305,10 +306,16 @@ class AbstractTag(Blok):
         return attribute in self.attributes
 
     def __getitem__(self, attribute):
-        return self.attributes[attribute]
+        if attribute in self.attribute_descriptors.keys():
+            return getattr(self, attribute)
+        else:
+            return self.attributes[attribute]
 
     def __setitem__(self, attribute, value):
-        self.attributes[attribute] = value
+        if attribute in self.attribute_descriptors.keys():
+            setattr(self, attribute, value)
+        else:
+            self.attributes[attribute] = value
 
     def __delitem__(self, attribute):
         del self.attributes[attribute]

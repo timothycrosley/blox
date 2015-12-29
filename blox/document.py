@@ -41,3 +41,9 @@ class Document(Blox):
     @property
     def blox_container(self):
         return self.html.body
+
+    def __setitem__(self, index, value):
+        return self.html.__setitem__(index, value)
+
+    def __getitem__(self, index, value):
+        return self.html.__getitem__(index, value)
