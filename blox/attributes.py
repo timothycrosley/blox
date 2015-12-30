@@ -156,6 +156,9 @@ class BlokAttribute(DirectAttribute):
             delattr(obj, self.object_attribute)
 
 
+class TextAttribute(BlokAttribute)
+
+
 class Attribute(AbstractAttribute):
     '''Defines a basic Blok attribute that is rendered by the framework and stores its data in a .attributes dict'''
     __slots__ = ()
