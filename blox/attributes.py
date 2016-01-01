@@ -156,7 +156,31 @@ class BlokAttribute(DirectAttribute):
             delattr(obj, self.object_attribute)
 
 
-class TextAttribute(BlokAttribute)
+class TextAttribute(BlokAttribute):
+    __slots__ = ()
+
+     def __get__(self, obj, cls):
+        if not hasattr(obj, self.object_attribute):
+            add_object = self.type()
+            position = getattr(self, 'position', None)
+            if position is not None:
+                obj.blox.insert(position, add_object)
+            else:
+                obj.blox.append(add_object)
+            setattr(obj, self.object_attribute, add_object)
+
+        return getattr(obj, self.object_attribute)
+
+    def __set__(self, obj, value):
+        self.__delete__(obj)
+        if not hasattr(obj, self.object_attribute):
+            position = getattr(self, 'position', None)
+            if position is not None:
+                obj.blox.insert(position, self.type(value))
+            else:
+                obj.blox.append(value)
+            setattr(obj, self.object_attribute, self.type(value))
+        return getattr(obj, self.object_attribute
 
 
 class Attribute(AbstractAttribute):
