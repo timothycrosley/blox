@@ -159,7 +159,7 @@ class BlokAttribute(DirectAttribute):
 class TextAttribute(BlokAttribute):
     __slots__ = ()
 
-     def __get__(self, obj, cls):
+    def __get__(self, obj, cls):
         if not hasattr(obj, self.object_attribute):
             add_object = self.type()
             position = getattr(self, 'position', None)
@@ -180,7 +180,7 @@ class TextAttribute(BlokAttribute):
             else:
                 obj.blox.append(value)
             setattr(obj, self.object_attribute, self.type(value))
-        return getattr(obj, self.object_attribute
+        return getattr(obj, self.object_attribute)
 
 
 class Attribute(AbstractAttribute):
