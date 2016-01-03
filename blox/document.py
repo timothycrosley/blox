@@ -45,5 +45,5 @@ class Document(Blox):
     def __setitem__(self, index, value):
         return self.html.__setitem__(index, value)
 
-    def __getitem__(self, index, value):
-        return self.html.__getitem__(index, value)
+    def __getitem__(self, index):
+        return self.html.__getitem__(index)
