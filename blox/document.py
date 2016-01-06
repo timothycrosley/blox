@@ -43,7 +43,11 @@ class Document(Blox):
         return self.html.body
 
     def __setitem__(self, index, value):
+        if type(index) == int:
+            return super().__setitem__(index, value)
         return self.html.__setitem__(index, value)
 
     def __getitem__(self, index):
+        if type(index) == int:
+            return super().__getitem__(index)
         return self.html.__getitem__(index)

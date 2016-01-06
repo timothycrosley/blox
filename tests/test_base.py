@@ -103,7 +103,7 @@ class TestBlox(TestBlok):
 
         for_testing = Text('for testing')
         old_size = len(self.blok)
-        self.blok.blox.append(for_testing)
+        self.blok += for_testing
         assert self.blok[old_size] == for_testing
         assert len(self.blok) == old_size + 1
         assert for_testing in self.blok
