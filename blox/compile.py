@@ -103,3 +103,32 @@ def to_python(dom, factory=factory, indent='    '):
     return SCRIPT_TEMPLATE.format(accessors=json.dumps(accessors),
                                   build_steps="\n{indent}".join(lines).format(indent=indent),
                                   indent=indent)
+
+
+class Template(object):
+    '''Represents a template that has been compiled and exec'd in the current runtime, produces a new Node
+        representation of the template every time you call you call 'build()' behaving in a similar fashion as
+        templates that have been compiled and saved into python modules.
+    '''
+    __slots__ = ('exec_namespace', 'factory')
+    def __init__(self, exec_namespace, factory):
+        self.exec_namespace = exec_namespace
+        self.factory = factory
+
+    def build(self, factory=factory):
+        """
+            Returns a Node representation of the template using the specified factory.
+        """
+        factory = factory or self.factory
+        return self.exec_namespace['build'](factory)
+
+    @classmethod
+    def create(self, template, factory=factory):
+        """
+            Compiles a template in the current python runtime into optimized python bytecode using compile and exec
+            returns a CompiledTemplate instance.
+        """
+        code = compile(to_python(template, factory), '<string>', 'exec')
+        name_space = {}
+        exec(code, name_space)
+        return CompiledTemplate(name_space, factory)
