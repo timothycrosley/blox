@@ -175,11 +175,12 @@ class TextAttribute(BlokAttribute):
         self.__delete__(obj)
         if not hasattr(obj, self.object_attribute):
             position = getattr(self, 'position', None)
+            value = self.type(value)
             if position is not None:
-                obj.blox.insert(position, self.type(value))
+                obj.blox.insert(position, value)
             else:
                 obj.blox.append(value)
-            setattr(obj, self.object_attribute, self.type(value))
+            setattr(obj, self.object_attribute, value)
         return getattr(obj, self.object_attribute)
 
 
