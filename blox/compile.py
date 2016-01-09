@@ -28,6 +28,11 @@ from blox.all import factory
 from blox.base import Blox, Text, UnsafeText
 from lxml.etree import HTMLParser, fromstring, parse
 
+try:
+    import Cython
+except ImportError:
+    Cython = False
+
 parser = HTMLParser()
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
@@ -113,6 +118,10 @@ def _to_python(dom, factory=factory, indent='    '):
 
 
 def _to_template(dom, factory=factory, indent='    '):
-    name_space = {}
-    exec(compile(_to_python(dom, factory, indent), '<string>', 'exec'), name_space)
-    return partial(name_space['build'], factory=factory)
+    code = _to_python(dom, factory, indent)
+    if Cython:
+        name_space = Cython.inline(code)
+    else:
+        name_space = {}
+        exec(compile(code, '<string>', 'exec'), name_space)
+    return partial(name_space['build'], factory)
