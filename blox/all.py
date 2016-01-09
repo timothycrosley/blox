@@ -19,7 +19,7 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
-from blox import dom, document
-from blox.builder import Factory, Composite
+from blox import document, dom
+from blox.builder import Composite, Factory
 
 factory = Composite((dom.factory, document.factory))

@@ -1068,4 +1068,3 @@ class HTML(TagWithChildren):
     manifest = Attribute()
     head = BlokAttribute(Head, position=0)
     body = BlokAttribute(Body, position=1)
-

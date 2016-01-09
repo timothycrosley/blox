@@ -20,11 +20,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 import json
-from blox.base import Blox, Text, UnsafeText
-from blox.all import factory
-from xml.dom import minidom
-from lxml.etree import HTMLParser, parse, fromstring
 from functools import partial
+from xml.dom import minidom
+
+from blox import shpaml
+from blox.all import factory
+from blox.base import Blox, Text, UnsafeText
+from lxml.etree import HTMLParser, fromstring, parse
 
 parser = HTMLParser()
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
@@ -43,19 +45,23 @@ def build(factory):
 """
 
 
-def from_file(file_object):
-    return parse(file_object, parser=parser).getroot()
+def string(html):
+    '''Returns a blox template from an html string'''
+    return _to_template(fromstring(shpaml.convert_text(html)))
 
 
-def from_filename(file_name):
-    return from_file(open(file_name))
+def file(file_object):
+    '''Returns a blox template from a file stream object'''
+    return string(file_object.read())
 
 
-def from_string(html):
-    return fromstring(html)
+def filename(file_name):
+    '''Returns a blox template from a valid file path'''
+    with open(file_name) as template_file:
+        return file(template_file)
 
 
-def to_python(dom, factory=factory, indent='    '):
+def _to_python(dom, factory=factory, indent='    '):
     current = [0]
     def increment(element_name=''):
         current[0] += 1
@@ -106,6 +112,5 @@ def to_python(dom, factory=factory, indent='    '):
                                   indent=indent)
 
 
-def to_template(dom, factory=factory, indent='    '):
-    '''Returns a function, that when called, will return a new instance of the template'''
-    return partial(compile(to_python(template, factory, indent), '<string>', 'exec')['build'], factory=factory)
+def _to_template(dom, factory=factory, indent='    '):
+    return partial(compile(_to_python(template, factory, indent), '<string>', 'exec')['build'], factory=factory)

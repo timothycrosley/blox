@@ -405,4 +405,3 @@ def indent_lines(lines,
         return
     prefix_lines = list(map(indentation_method, lines))
     recurse(prefix_lines)
-
