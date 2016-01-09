@@ -105,6 +105,7 @@ def to_python(dom, factory=factory, indent='    '):
                                   build_steps="\n{indent}".join(lines).format(indent=indent),
                                   indent=indent)
 
+
 def to_template(dom, factory=factory, indent='    '):
     '''Returns a function, that when called, will return a new instance of the template'''
     return partial(compile(to_python(template, factory, indent), '<string>', 'exec')['build'], factory=factory)
