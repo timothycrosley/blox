@@ -113,4 +113,6 @@ def _to_python(dom, factory=factory, indent='    '):
 
 
 def _to_template(dom, factory=factory, indent='    '):
-    return partial(compile(_to_python(template, factory, indent), '<string>', 'exec')['build'], factory=factory)
+    name_space = {}
+    exec(compile(_to_python(dom, factory, indent), '<string>', 'exec'), name_space)
+    return partial(name_space['build'], factory=factory)
