@@ -47,7 +47,7 @@ def build(factory):
 
 def string(html):
     '''Returns a blox template from an html string'''
-    return _to_template(fromstring(shpaml.convert_text(html)))
+    return _to_template(fromstring(shpaml.convert_text(html), parser=parser))
 
 
 def file(file_object):
