@@ -75,8 +75,6 @@ def _to_python(dom, factory=factory, indent='    '):
     lines = []
     accessors = []
     def compile_node(node, parent='template'):
-        if node.tag == 'title':
-            import ipdb;ipdb.set_trace()
         blok_name, blok = increment(node.tag)
         lines.append("{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag))
 
