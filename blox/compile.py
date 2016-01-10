@@ -88,11 +88,12 @@ def _to_python(dom, factory=factory, indent='    '):
                 lines.append('{0}(Text("{1}"))'.format(blok_name, text))
 
         for attribute_name, attribute_value in node.items():
-            lines.append('{0}["{1}"] = "{2}"'.format(blok_name, attribute_name.replace('"', '\\"'),
-                                                     attribute_value.replace('"', '\\"')))
             if attribute_name == 'accessor':
                 accessors.append(attribute_value)
-                lines.apppend('{0}.{1} = {2}'.format(parent, attribute_value, blok_name))
+                lines.append('template.{0} = {1}'.format(attribute_value, blok_name))
+            else:
+                lines.append('{0}["{1}"] = "{2}"'.format(blok_name, attribute_name.replace('"', '\\"'),
+                                                         attribute_value.replace('"', '\\"')))
 
         for child_node in node:
             if child_node.tag in getattr(blok, 'blok_attributes', {}):
