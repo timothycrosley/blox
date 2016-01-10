@@ -82,7 +82,7 @@ def _to_python(dom, factory=factory, indent='    '):
 
         text = (node.text or "").strip().replace('"', '\\"')
         if text:
-            if hasattr(blok, 'text'):
+            if 'text' in dir(blok):
                 lines.append('{0}.text = "{1}"'.format(blok_name, text))
             else:
                 lines.append('{0}(Text("{1}"))'.format(blok_name, text))
@@ -120,6 +120,7 @@ def _to_python(dom, factory=factory, indent='    '):
 
 def _to_template(dom, factory=factory, indent='    '):
     code = _to_python(dom, factory, indent)
+    print(code)
     if Cython:
         name_space = Cython.inline(code)
     else:
