@@ -118,9 +118,8 @@ def _to_python(dom, factory=factory, indent='    '):
                                   indent=indent)
 
 
-def _to_template(dom, factory=factory, indent='    '):
-    code = _to_python(dom, factory, indent)
-    print(code)
+def _to_template(dom, factory=factory):
+    code = _to_python(dom, factory, indent='    ')
     if Cython:
         name_space = Cython.inline(code)
     else:
