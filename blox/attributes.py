@@ -164,12 +164,7 @@ class AccessorAttribute(DirectAttribute):
         super().__init__(type=type, signal=signal, doc=doc, name=name)
 
     def __get__(self, obj, cls):
-        if not hasattr(obj, self.object_attribute):
-            add_object = self.type()
-            obj.blox.append(add_object)
-            setattr(obj, self.object_attribute, add_object)
-
-        return getattr(obj, self.object_attribute)
+        return getattr(obj, self.object_attribute, None)
 
     def parent(self, obj):
         return getattr(obj, self.parent_attribute)
