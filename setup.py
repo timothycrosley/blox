@@ -82,7 +82,7 @@ except (IOError, ImportError, OSError, RuntimeError):
    readme = ''
 
 setup(name='blox',
-      version='0.0.1',
+      version='0.1.0',
       description='Build it with Python',
       long_description=readme,
       author='Timothy Crosley',
@@ -95,7 +95,7 @@ setup(name='blox',
       #  ]
       #},
       packages=['blox'],
-      requires=['connectable'],
+      requires=['connectable', 'lxml', 'cssselect'],
       install_requires=['connectable==1.2.0', 'lxml>=3.0.0', 'cssselect>=0.9.1'],
       cmdclass=cmdclass,
       ext_modules=ext_modules,
