@@ -20,7 +20,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 import pytest
 
-from blox.base import Blok, Invalid, Text, Blox, Tag, NamedTag, TagWithChildren, UnsafeText
+from blox.base import Blok, Invalid, Blox, Tag, NamedTag, TagWithChildren
+from blox.text import Text, UnsafeText
 from io import StringIO
 
 

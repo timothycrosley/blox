@@ -19,6 +19,8 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
+import cgi
+
 from blox.base import Blok
 from blox.builder import Factory
 
@@ -60,3 +62,23 @@ class UnsafeText(Text):
     def output(self, to=None, *args, **kwargs):
         '''Outputs the set text'''
         to.write(cgi.escape(str(self._value)))
+
+
+class unsafe(object):
+    '''Wrap any str-able object in this to explicity mark it's output as unsafe'''
+    __slots__ = ('value', )
+    safe = True
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return cgi.escape(str(self.value))
+
+
+class unsafe_str(str):
+    '''Creates a string that is explicity marked as unsafe'''
+
+    def __str__(self):
+        return cgi.escape(super().__str__())
+

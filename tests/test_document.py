@@ -20,7 +20,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 """
 from blox.document import Document
-from blox.base import Text
+from blox.text import Text
 from .test_base import TestBlox
 
 

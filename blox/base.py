@@ -28,7 +28,6 @@ from blox.attributes import (AbstractAttribute, Attribute, RenderedDirect, SetAt
                              BooleanAttribute, IntegerAttribute, DirectAttribute, BlokAttribute)
 
 from io import StringIO
-import cgi
 
 UNDERSCORE = (re.compile('(.)([A-Z][a-z]+)'), re.compile('([a-z0-9])([A-Z])'))
 
@@ -368,21 +367,3 @@ class Wildcard(TagWithChildren):
     def __init__(self, tag, *kargs, **kwargs):
         self.tag = tag
 
-
-class unsafe(object):
-    '''Wrap any str-able object in this to explicity mark it's output as unsafe'''
-    __slots__ = ('value', )
-    safe = True
-
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return cgi.escape(str(self.value))
-
-
-class unsafe_str(str):
-    '''Creates a string that is explicity marked as unsafe'''
-
-    def __str__(self):
-        return cgi.escape(super().__str__())
