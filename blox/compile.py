@@ -85,6 +85,8 @@ def _to_python(dom, factory=factory, indent='    '):
             else:
                 lines.append('{0}(Text("{1}"))'.format(blok_name, text))
 
+        if 'id' in node.keys() and not 'accessor' in node.keys():
+            node.set('accessor', node.get('id'))
         for attribute_name, attribute_value in node.items():
             if attribute_name == 'accessor':
                 accessors.append(attribute_value)
