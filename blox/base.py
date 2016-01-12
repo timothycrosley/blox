@@ -124,43 +124,6 @@ class Invalid(Blok):
         to.write('<h2>Invalid</h2>')
 
 
-class Text(Blok):
-    '''Defines the most basic text block'''
-    __slots__ = ('_value', )
-    signals = ('value_changed', )
-
-    def __init__(self, value=''):
-        super().__init__()
-        self._value = value
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        if value != self._value:
-            self.emit('value_changed', value)
-            self._value = value
-
-    def output(self, to=None, *args, **kwargs):
-        '''Outputs the set text'''
-        to.write(str(self._value))
-
-    def __call__(self, text):
-        '''Updates the text value'''
-        self.value = text
-        return self
-
-
-class UnsafeText(Text):
-    '''Defines text that comes from an untrusted source, and should therefore be escaped'''
-
-    def output(self, to=None, *args, **kwargs):
-        '''Outputs the set text'''
-        to.write(cgi.escape(str(self._value)))
-
-
 class Blox(Blok):
     '''A Block that can contain child blocks'''
     __slots__ = ('_blox', )

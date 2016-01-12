@@ -25,7 +25,8 @@ from xml.dom import minidom
 
 from blox import shpaml
 from blox.all import factory
-from blox.base import Blox, Text, UnsafeText
+from blox.base import Blox
+from blox.text import Text
 from lxml.etree import HTMLParser, fromstring, parse
 
 try:
@@ -36,7 +37,8 @@ except ImportError:
 parser = HTMLParser()
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
-from blox.base import Blox, Text, UnsafeText
+from blox.base import Blox
+from blox.text import Text, UnsafeText
 
 
 class Template(Blox):
@@ -50,33 +52,42 @@ def build(factory):
 """
 
 
-def string(html):
+def string(html, **queries):
     '''Returns a blox template from an html string'''
-    return _to_template(fromstring(shpaml.convert_text(html), parser=parser))
+    return _to_template(fromstring(shpaml.convert_text(html), parser=parser),  **queries)
 
 
-def file(file_object):
+def file(file_object, **queries):
     '''Returns a blox template from a file stream object'''
-    return string(file_object.read())
+    return string(file_object.read(), **queries)
 
 
-def filename(file_name):
+def filename(file_name, **queries):
     '''Returns a blox template from a valid file path'''
     with open(file_name) as template_file:
-        return file(template_file)
+        return file(template_file, **queries)
 
 
-def _to_python(dom, factory=factory, indent='    '):
+def _to_python(dom, factory=factory, indent='    ', **queries):
     current = [0]
     def increment(element_name=''):
         current[0] += 1
         return ('{0}{1}'.format(element_name, current[0]), factory.get(element_name))
 
     lines = []
-    accessors = []
+    accessors = list(queries.keys())
+
+    matches = {}
+    for accessor, query in queries.items():
+        lines.append('template.{0} = []'.format(accessor))
+        for match in dom.cssselect(query):
+            matches[match] = accessor
+
     def compile_node(node, parent='template'):
         blok_name, blok = increment(node.tag)
         lines.append("{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag))
+        if node in matches:
+            lines.append('template.{0}.append({1})'.format(matches[node], blok_name))
 
         text = (node.text or "").strip().replace('"', '\\"')
         if text:
@@ -118,8 +129,8 @@ def _to_python(dom, factory=factory, indent='    '):
                                   indent=indent)
 
 
-def _to_template(dom, factory=factory):
-    code = _to_python(dom, factory, indent='    ')
+def _to_template(dom, factory=factory, **queries):
+    code = _to_python(dom, factory, indent='    ', **queries)
     if Cython:
         name_space = Cython.inline(code)
     else:

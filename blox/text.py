@@ -1,6 +1,6 @@
-"""blox/__init__.py
+'''blox/text.py
 
-Exposes a factory for all blox elements
+Defines the basic Text rendering blox
 
 Copyright (C) 2015  Timothy Edmund Crosley
 
@@ -18,8 +18,45 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-"""
-from blox import document, dom, text
-from blox.builder import Composite, Factory
+'''
+from blox.base import Blok
+from blox.builder import Factory
 
-factory = Composite((dom.factory, document.factory, text.factory))
+factory = Factory('text')
+
+
+class Text(Blok):
+    '''Defines the most basic text block'''
+    __slots__ = ('_value', )
+    signals = ('value_changed', )
+
+    def __init__(self, value=''):
+        super().__init__()
+        self._value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        if value != self._value:
+            self.emit('value_changed', value)
+            self._value = value
+
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs the set text'''
+        to.write(str(self._value))
+
+    def __call__(self, text):
+        '''Updates the text value'''
+        self.value = text
+        return self
+
+
+class UnsafeText(Text):
+    '''Defines text that comes from an untrusted source, and should therefore be escaped'''
+
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs the set text'''
+        to.write(cgi.escape(str(self._value)))

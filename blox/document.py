@@ -21,7 +21,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
                              IntegerAttribute, NestedAttribute, RenderedDirect, SetAttribute)
-from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren, Text
+from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren
 from blox.builder import Factory
 from blox.dom import HTML, DocType
 
