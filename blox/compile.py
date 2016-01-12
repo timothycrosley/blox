@@ -52,23 +52,31 @@ def build(factory):
 """
 
 
-def string(html, **queries):
+def string(html, start_on=None, ignore=(), **queries):
     '''Returns a blox template from an html string'''
-    return _to_template(fromstring(shpaml.convert_text(html), parser=parser),  **queries)
+    return _to_template(fromstring(shpaml.convert_text(html), parser=parser), start_on=start_on, ignore=ignore,
+                        **queries)
 
 
-def file(file_object, **queries):
+def file(file_object, start_on=None, ignore=(), **queries):
     '''Returns a blox template from a file stream object'''
-    return string(file_object.read(), **queries)
+    return string(file_object.read(), start_on=start_on, ignore=ignore, **queries)
 
 
-def filename(file_name, **queries):
+def filename(file_name, start_on=None, ignore=(), **queries):
     '''Returns a blox template from a valid file path'''
     with open(file_name) as template_file:
-        return file(template_file, **queries)
+        return file(template_file, start_on=start_on, ignore=ignore, **queries)
 
 
-def _to_python(dom, factory=factory, indent='    ', **queries):
+def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **queries):
+    if start_on:
+        dom = dom.cssselect(start_on)[0]
+
+    ignored = set()
+    for query in ignore if type(ignore) in (list, tuple) else (ignore, ):
+        ignored.update(dom.cssselect(query))
+
     current = [0]
     def increment(element_name=''):
         current[0] += 1
@@ -84,6 +92,9 @@ def _to_python(dom, factory=factory, indent='    ', **queries):
             matches[match] = accessor
 
     def compile_node(node, parent='template'):
+        if node in ignored:
+            return
+
         blok_name, blok = increment(node.tag)
         lines.append("{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag))
         if node in matches:
@@ -129,8 +140,8 @@ def _to_python(dom, factory=factory, indent='    ', **queries):
                                   indent=indent)
 
 
-def _to_template(dom, factory=factory, **queries):
-    code = _to_python(dom, factory, indent='    ', **queries)
+def _to_template(dom, factory=factory, start_on=None, ignore=(), **queries):
+    code = _to_python(dom, factory, indent='    ', start_on=start_on, ignore=ignore, **queries)
     if Cython:
         name_space = Cython.inline(code)
     else:
