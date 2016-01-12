@@ -27,6 +27,7 @@ from blox import shpaml
 from blox.all import factory
 from blox.base import Blox
 from blox.text import Text
+from blox.attributes import AccessorAttribute
 from lxml.etree import HTMLParser, fromstring, parse
 
 try:
@@ -39,10 +40,12 @@ SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
 from blox.base import Blox
 from blox.text import Text, UnsafeText
+from blox.attributes import AccessorAttribute
 
 
 class Template(Blox):
 {indent}__slots__ = tuple({accessors})
+{indent}{attributes}
 
 
 def build(factory):
@@ -84,6 +87,7 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
 
     lines = []
     accessors = list(queries.keys())
+    attributes = []
 
     matches = {}
     for accessor, query in queries.items():
@@ -111,7 +115,8 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
             node.set('accessor', node.get('id'))
         for attribute_name, attribute_value in node.items():
             if attribute_name == 'accessor':
-                accessors.append(attribute_value)
+                attributes.append("{0} = AccessorAttribute(Text)".format(attribute_value))
+                lines.append('template._{0}_parent = {1}'.format(attribute_value, parent))
                 lines.append('template.{0} = {1}'.format(attribute_value, blok_name))
             else:
                 lines.append('{0}["{1}"] = "{2}"'.format(blok_name, attribute_name.replace('"', '\\"'),
@@ -136,6 +141,7 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
                 lines.append('{0}(Text("{1}"))'.format(blok_name, tail))
     compile_node(dom)
     return SCRIPT_TEMPLATE.format(accessors=json.dumps(accessors),
+                                  attributes="\n{indent}".join(attributes).format(indent=indent),
                                   build_steps="\n{indent}".join(lines).format(indent=indent),
                                   indent=indent)
 

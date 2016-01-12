@@ -25,7 +25,8 @@ from itertools import chain
 
 from connectable import Connectable
 from blox.attributes import (AbstractAttribute, Attribute, RenderedDirect, SetAttribute,
-                             BooleanAttribute, IntegerAttribute, DirectAttribute, BlokAttribute)
+                             BooleanAttribute, IntegerAttribute, DirectAttribute, BlokAttribute,
+                             AccessorAttribute)
 
 from io import StringIO
 
@@ -49,6 +50,7 @@ class TagAttributes(type):
             render_attributes = []
             direct_attributes = []
             init_attributes = []
+            accessor_attributes = []
             for attribute_name, attribute in attributes.items():
                 if not hasattr(attribute, 'name'):
                     attribute.name = attribute_name
@@ -62,9 +64,14 @@ class TagAttributes(type):
                         init_attributes.append(attribute_name)
                     if isinstance(attribute, BlokAttribute) and hasattr(attribute.type, 'tag'):
                         blok_attributes[attribute.type.tag] = attribute
+                if isinstance(attribute, AccessorAttribute):
+                    accessor_attributes.append(attribute)
+                    if not hasattr(attribute, 'parent_attribute'):
+                        attribute.parent_attribute = '_{0}_parent'.format(attribute_name)
 
             if direct_attributes and not name == 'AbstractTag' and '__slots__' in class_dict:
                 class_dict['__slots__'] += tuple(attribute.object_attribute for attribute in direct_attributes)
+                class_dict['__slots__'] += tuple(attribute.parent_attribute for attribute in accessor_attributes)
 
             if render_attributes:
                 if hasattr(parents[0], 'render_attributes'):

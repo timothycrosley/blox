@@ -156,6 +156,53 @@ class BlokAttribute(DirectAttribute):
             delattr(obj, self.object_attribute)
 
 
+class AccessorAttribute(DirectAttribute):
+    '''Defines a blok accessed by a root attribute'''
+    __slots__ = ('parent_attribute', )
+
+    def __init__(self, type, signal=False, doc="An accessed blok attribute", name=None):
+        super().__init__(type=type, signal=signal, doc=doc, name=name)
+
+    def __get__(self, obj, cls):
+        if not hasattr(obj, self.object_attribute):
+            add_object = self.type()
+            obj.blox.append(add_object)
+            setattr(obj, self.object_attribute, add_object)
+
+        return getattr(obj, self.object_attribute)
+
+    def parent(self, obj):
+        return getattr(obj, self.parent_attribute)
+
+    def instance(self, obj):
+        return getattr(obj, self.object_attribute, None)
+
+    def __set__(self, obj, value):
+        if type(value) == str:
+            value = self.type(value)
+
+        parent = self.parent(obj)
+        if value in parent:
+            setattr(obj, self.object_attribute, value)
+            return value
+
+        position = None
+        if hasattr(obj, self.object_attribute):
+            position = parent.blox.index(self.instance(obj))
+        self.__delete__(obj)
+        if position is not None:
+            parent.blox.insert(position, value)
+        else:
+            parent.blox.append(value)
+        setattr(obj, self.object_attribute, value)
+        return value
+
+    def __delete__(self, obj):
+        if hasattr(obj, self.object_attribute):
+            self.parent(obj).blox.remove(self.instance(obj))
+            delattr(obj, self.object_attribute)
+
+
 class TextAttribute(BlokAttribute):
     __slots__ = ()
 
