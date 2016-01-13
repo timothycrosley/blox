@@ -109,10 +109,10 @@ class ListAttribute(RenderedDirect):
         super().__init__(signal=signal, type=self.list_type, doc=doc, name=name)
 
     def render_value(self, obj):
-        return " ".join(str(value) for value in list)
+        return " ".join(str(value) for value in getattr(obj, self.object_attribute))
 
 
-class SetAttribute(RenderedDirect):
+class SetAttribute(ListAttribute):
     '''Defines an attribute that is exposed from Python as a set'''
     __slots__ = ()
     list_type = set
