@@ -216,7 +216,7 @@ class AbstractTag(Blok):
     tag_self_closes = True
     tag = ""
     id = RenderedDirect()
-    classes = SetAttribute()
+    classes = SetAttribute(name="class")
     accesskey = Attribute()
     contenteditable = BooleanAttribute(default=True)
     contextmenu = Attribute()
