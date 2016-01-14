@@ -82,18 +82,13 @@ except (IOError, ImportError, OSError, RuntimeError):
    readme = ''
 
 setup(name='blox',
-      version='0.2.0',
+      version='0.2.1',
       description='Build it with Python',
       long_description=readme,
       author='Timothy Crosley',
       author_email='timothy.crosley@gmail.com',
       url='https://github.com/timothycrosley/blox',
       license="MIT",
-      # entry_points={
-      #  'console_scripts': [
-      #      'blox = blox:run.terminal',
-      #  ]
-      #},
       packages=['blox'],
       requires=['connectable', 'lxml', 'cssselect'],
       install_requires=['connectable==1.2.0', 'lxml>=3.0.0', 'cssselect>=0.9.1'],
