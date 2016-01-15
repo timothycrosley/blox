@@ -154,12 +154,14 @@ class Blox(Blok):
             self._blox = []
         return self._blox
 
-    def __call__(self, blok, position=None):
+    def __call__(self, *blox, position=None):
         '''Adds a nested blok to this blok'''
         if position is not None:
-            self.blox_container.blox.insert(position, blok)
+            for blok in blox:
+                self.blox_container.blox.insert(position, blok)
         else:
-            self.blox_container.blox.append(blok)
+            for blok in blox:
+                self.blox_container.blox.append(blok)
         return blok
 
     def __iter__(self):
