@@ -28,14 +28,14 @@ from blox.all import factory
 from blox.base import Blox
 from blox.text import Text
 from blox.attributes import AccessorAttribute
-from lxml.etree import HTMLParser, fromstring, parse
+from lxml.etree import HTMLParser
+from lxml.html import fromstring
 
 try:
     import Cython
 except ImportError:
     Cython = False
 
-parser = HTMLParser()
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
 from blox.base import Blox
@@ -57,8 +57,8 @@ def build(factory):
 
 def string(html, start_on=None, ignore=(), **queries):
     '''Returns a blox template from an html string'''
-    return _to_template(fromstring(shpaml.convert_text(html), parser=parser), start_on=start_on, ignore=ignore,
-                        **queries)
+    return _to_template(fromstring(shpaml.convert_text(html)), start_on=start_on,
+                        ignore=ignore, **queries)
 
 
 def file(file_object, start_on=None, ignore=(), **queries):
