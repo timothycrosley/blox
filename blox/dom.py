@@ -61,6 +61,7 @@ class A(TagWithChildren):
     rel = Attribute()
     target = Attribute()
     type = Attribute()
+    text = TextAttribute(Text)
 
 
 @factory.add()
