@@ -21,7 +21,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 '''
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
                              IntegerAttribute, NestedAttribute, RenderedDirect, SetAttribute)
-from blox.base import Blok, Blox, NamedTag, Tag, TagWithChildren
+from blox.base import Blok, NamedTag, Tag, TagWithChildren
+from blox.containers import Container
 from blox.builder import Factory
 from blox.dom import HTML, DocType
 
@@ -29,7 +30,7 @@ factory = Factory("Document")
 
 
 @factory.add('document', 'html')
-class Document(Blox):
+class Document(Container):
     '''Defines the basic concept of full HTML document/page'''
     __slots__ = ()
     doc_type = BlokAttribute(DocType, init=True, position=0)

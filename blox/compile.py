@@ -25,7 +25,7 @@ from xml.dom import minidom
 
 from blox import shpaml
 from blox.all import factory
-from blox.base import Blox
+from blox.containers import Container
 from blox.text import Text
 from blox.attributes import AccessorAttribute
 from lxml.etree import HTMLParser
@@ -38,12 +38,12 @@ except ImportError:
 
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
-from blox.base import Blox
+from blox.containers import Container
 from blox.text import Text, UnsafeText
 from blox.attributes import AccessorAttribute
 
 
-class Template(Blox):
+class Template(Container):
 {indent}__slots__ = tuple({accessors})
 {indent}{attributes}
 

@@ -33,6 +33,49 @@ from io import StringIO
 UNDERSCORE = (re.compile('(.)([A-Z][a-z]+)'), re.compile('([a-z0-9])([A-Z])'))
 
 
+class Blox(list):
+
+    def __getitem__(self, index):
+        if type(index) == int:
+            return super().__getitem__(index)
+
+        return self and self[0][index]
+
+    def __setitem__(self, index, value):
+        if type(index) == int:
+            return super().__setitem__(index, value)
+
+        for blok in self:
+            blok[index] = value
+
+    def get(self, attribute, default=None):
+        if type(index) == int:
+            return self[index] if (self and index > 0 and index < len(self)) else default
+
+        return self[0][index] if self else None
+
+    def output(self, to=None, *args, **kwargs):
+        '''Outputs to a stream (like a file or request)'''
+        for blok in self:
+            blok.output(to, *args, **kwargs)
+
+    def render(self, *args, **kwargs):
+        '''Renders as a str'''
+        render_to = StringIO()
+        self.output(render_to, *args, **kwargs)
+        return render_to.getvalue()
+
+    def __str__(self):
+        return self.render(formatted=True)
+
+    def __getattr__(self, attribute):
+        return self and getattr(self[0], attribute, None)
+
+    def __setattr__(self, attribute, value):
+        for blok in self:
+            setattr(self, attribute, value)
+
+
 class TagAttributes(type):
     '''A meta class to automatically register signals for tag attributes'''
 
@@ -130,7 +173,7 @@ class Invalid(Blok):
         to.write('<h2>Invalid</h2>')
 
 
-class Blox(Blok):
+class Container(Blok):
     '''A Block that can contain child blocks'''
     __slots__ = ('_blox', )
 
@@ -151,7 +194,7 @@ class Blox(Blok):
     def blox(self):
         '''Lazily creates and returns the list of child blox'''
         if not hasattr(self, '_blox'):
-            self._blox = []
+            self._blox = Blox()
         return self._blox
 
     def __call__(self, *blox, position=None):
@@ -169,6 +212,9 @@ class Blox(Blok):
 
     def __contains__(self, blok):
         return blok in self.blox_container.blox
+
+    def get(self, index, default=None):
+        return self[index] if (len(self) and index > 0 and index < len(self)) else default
 
     def __getitem__(self, index):
         return self.blox_container.blox[index]
@@ -273,6 +319,12 @@ class AbstractTag(Blok):
         if not self.tag_self_closes:
             to.write(self.end_tag)
 
+    def get(self, attribute, default=None):
+        if attribute in self.attribute_descriptors.keys():
+            return getattr(self, attribute, default)
+        else:
+            return self.attributes.get(default)
+
     def __contains__(self, attribute):
         return attribute in self.attributes
 
@@ -313,7 +365,7 @@ class NamedTag(Tag):
         return super().__repr_self__(identifiers)
 
 
-class TagWithChildren(Blox, AbstractTag):
+class TagWithChildren(Container, AbstractTag):
     '''Defines a tag that can contain children'''
     __slots__ = ('_attributes', '_id', '_classes')
     tag = ""
@@ -348,23 +400,29 @@ class TagWithChildren(Blox, AbstractTag):
             to.write(self.end_tag)
 
     def __contains__(self, attribute_or_blok):
-        return Blox.__contains__(self, attribute_or_blok) or AbstractTag.__contains__(self, attribute_or_blok)
+        return Container.__contains__(self, attribute_or_blok) or AbstractTag.__contains__(self, attribute_or_blok)
+
+    def get(self, attribute_or_blok, default=None):
+        if type(attribute_or_blok) == int:
+            return Container.get(self, attribute_or_blok, default)
+        else:
+            return AbstractTag.get(self, attribute_or_blok, default)
 
     def __getitem__(self, attribute_or_blok):
         if type(attribute_or_blok) == int:
-            return Blox.__getitem__(self, attribute_or_blok)
+            return Container.__getitem__(self, attribute_or_blok)
         else:
             return AbstractTag.__getitem__(self, attribute_or_blok)
 
     def __setitem__(self, attribute_or_blok, value):
         if type(attribute_or_blok) == int:
-            return Blox.__setitem__(self, attribute_or_blok, value)
+            return Container.__setitem__(self, attribute_or_blok, value)
         else:
             return AbstractTag.__setitem__(self, attribute_or_blok, value)
 
     def __delitem__(self, attribute_or_blok):
         if type(attribute_or_blok) == int:
-            return Blox.__delitem__(self, attribute_or_blok)
+            return Container.__delitem__(self, attribute_or_blok)
         else:
             return AbstractTag.__delitem__(self, attribute_or_blok)
 
