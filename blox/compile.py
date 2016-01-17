@@ -114,6 +114,7 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
         if 'id' in node.keys() and not 'accessor' in node.keys():
             node.set('accessor', node.get('id'))
         for attribute_name, attribute_value in node.items():
+            attribute_name = getattr(blok, 'attribute_map', {}).get(attribute_name, attribute_name)
             if attribute_name == 'accessor':
                 attributes.append("{0} = AccessorAttribute(Text)".format(attribute_value))
                 lines.append('template._{0}_parent = {1}'.format(attribute_value, parent))
