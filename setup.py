@@ -82,7 +82,7 @@ except (IOError, ImportError, OSError, RuntimeError):
    readme = ''
 
 setup(name='blox',
-      version='0.2.1',
+      version='0.3.0',
       description='Build it with Python',
       long_description=readme,
       author='Timothy Crosley',
