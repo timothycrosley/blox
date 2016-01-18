@@ -48,7 +48,7 @@ class Blox(list):
         for blok in self:
             blok[index] = value
 
-    def get(self, attribute, default=None):
+    def get(self, index, default=None):
         if type(index) in (int, slice):
             return self[index] if (self and index > 0 and index < len(self)) else default
 

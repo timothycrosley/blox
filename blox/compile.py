@@ -149,7 +149,7 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
 
 def _to_template(dom, factory=factory, start_on=None, ignore=(), **queries):
     code = _to_python(dom, factory, indent='    ', start_on=start_on, ignore=ignore, **queries)
-    if Cython:
+    if Cython and hasattr(Cython, 'inline'):
         name_space = Cython.inline(code)
     else:
         name_space = {}
