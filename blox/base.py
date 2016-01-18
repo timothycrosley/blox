@@ -36,20 +36,20 @@ UNDERSCORE = (re.compile('(.)([A-Z][a-z]+)'), re.compile('([a-z0-9])([A-Z])'))
 class Blox(list):
 
     def __getitem__(self, index):
-        if type(index) == int:
+        if type(index) in (int, slice):
             return super().__getitem__(index)
 
         return self and self[0][index]
 
     def __setitem__(self, index, value):
-        if type(index) == int:
+        if type(index) in (int, slice):
             return super().__setitem__(index, value)
 
         for blok in self:
             blok[index] = value
 
     def get(self, attribute, default=None):
-        if type(index) == int:
+        if type(index) in (int, slice):
             return self[index] if (self and index > 0 and index < len(self)) else default
 
         return self[0][index] if self else None
@@ -419,19 +419,19 @@ class TagWithChildren(Container, AbstractTag):
             return AbstractTag.get(self, attribute_or_blok, default)
 
     def __getitem__(self, attribute_or_blok):
-        if type(attribute_or_blok) == int:
+        if type(attribute_or_blok) in (int, slice):
             return Container.__getitem__(self, attribute_or_blok)
         else:
             return AbstractTag.__getitem__(self, attribute_or_blok)
 
     def __setitem__(self, attribute_or_blok, value):
-        if type(attribute_or_blok) == int:
+        if type(attribute_or_blok) in (int, slice):
             return Container.__setitem__(self, attribute_or_blok, value)
         else:
             return AbstractTag.__setitem__(self, attribute_or_blok, value)
 
     def __delitem__(self, attribute_or_blok):
-        if type(attribute_or_blok) == int:
+        if type(attribute_or_blok) in (int, slice):
             return Container.__delitem__(self, attribute_or_blok)
         else:
             return AbstractTag.__delitem__(self, attribute_or_blok)
