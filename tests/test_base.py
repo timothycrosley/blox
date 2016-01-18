@@ -22,7 +22,7 @@ from io import StringIO
 
 import pytest
 
-from blox.base import Blok, Blox, Invalid, NamedTag, Tag, TagWithChildren
+from blox.base import Blok, Blox, Invalid, NamedTag, Tag, TagWithChildren, Container
 from blox.text import Text, UnsafeText
 
 
@@ -85,8 +85,8 @@ class TestUnsafeText(TestText):
         assert self.blok.render() == '&lt;hi'
 
 
-class TestBlox(TestBlok):
-    testing = Blox
+class TestContainer(TestBlok):
+    testing = Container
     expected_output = 'hi bacon'
 
     @classmethod
@@ -137,7 +137,7 @@ class TestTag(TestBlok):
         tag = 'testing'
 
 
-class TestTagWithChildren(TestBlox):
+class TestTagWithChildren(TestContainer):
     expected_output = '<testing>hi bacon</testing>'
     class testing(TagWithChildren):
         tag = 'testing'

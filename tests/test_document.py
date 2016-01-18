@@ -22,10 +22,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 from blox.document import Document
 from blox.text import Text
 
-from .test_base import TestBlox
+from .test_base import TestContainer
 
 
-class TestDocument(TestBlox):
+class TestDocument(TestContainer):
     '''Test to ensure blox works as expected'''
     testing = Document
     expected_output = '<!DOCTYPE html><html><body>hi bacon</body></html>'
