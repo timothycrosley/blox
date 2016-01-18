@@ -200,6 +200,7 @@ class Blok(Connectable, metaclass=TagAttributes):
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
         to.write('')
+        return self
 
     def render(self, *args, **kwargs):
         '''Renders as a str'''
@@ -223,6 +224,7 @@ class Invalid(Blok):
 
     def output(self, to=None, *args, **kwargs):
         to.write('<h2>Invalid</h2>')
+        return self
 
 
 class Container(Blok):
@@ -308,6 +310,8 @@ class Container(Blok):
         else:
             for blok in self.blox:
                 blok.output(to=to, *args, **kwargs)
+
+        return self
 
 
 class AbstractTag(Blok):

@@ -24,6 +24,7 @@ from functools import partial
 from xml.dom import minidom
 
 from blox import shpaml
+from blox.base import Wildcard
 from blox.all import factory
 from blox.containers import Container
 from blox.text import Text
@@ -38,7 +39,7 @@ except ImportError:
 
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
-from blox.base import Blox
+from blox.base import Blox, Wildcard
 from blox.containers import Container
 from blox.text import Text, UnsafeText
 from blox.attributes import AccessorAttribute
@@ -101,7 +102,9 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
             return
 
         blok_name, blok = increment(node.tag)
-        lines.append("{0} = {1}(factory('{2}'))".format(blok_name, parent, node.tag))
+        lines.append("{0} = {1}({2}('{3}'))".format(blok_name, parent, 'factory' if blok else 'Wildcard', node.tag))
+        if not blok:
+            blok = Wildcard
         if node in matches:
             lines.append('template.{0}.append({1})'.format(matches[node], blok_name))
 
