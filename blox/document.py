@@ -19,13 +19,12 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
-                             IntegerAttribute, NestedAttribute, RenderedDirect, SetAttribute,
-                             NestedBlokAttribute)
+from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute, IntegerAttribute,
+                             NestedAttribute, NestedBlokAttribute, RenderedDirect, SetAttribute)
 from blox.base import Blok, NamedTag, Tag, TagWithChildren
-from blox.containers import Container
 from blox.builder import Factory
-from blox.dom import HTML, DocType, Head, Body
+from blox.containers import Container
+from blox.dom import HTML, Body, DocType, Head
 
 factory = Factory("Document")
 

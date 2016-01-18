@@ -22,8 +22,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
                              IntegerAttribute, RenderedDirect, SetAttribute, TextAttribute)
 from blox.base import Blok, NamedTag, Tag, TagWithChildren
-from blox.text import Text
 from blox.builder import Factory
+from blox.text import Text
 
 factory = Factory('dom')
 

@@ -18,11 +18,12 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
+from io import StringIO
+
 import pytest
 
-from blox.base import Blok, Invalid, Blox, Tag, NamedTag, TagWithChildren
+from blox.base import Blok, Blox, Invalid, NamedTag, Tag, TagWithChildren
 from blox.text import Text, UnsafeText
-from io import StringIO
 
 
 class TestBlok(object):

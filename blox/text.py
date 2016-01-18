@@ -81,4 +81,3 @@ class unsafe_str(str):
 
     def __str__(self):
         return cgi.escape(super().__str__())
-

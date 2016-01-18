@@ -23,14 +23,15 @@ import json
 from functools import partial
 from xml.dom import minidom
 
-from blox import shpaml
-from blox.base import Wildcard
-from blox.all import factory
-from blox.containers import Container
-from blox.text import Text
-from blox.attributes import AccessorAttribute
 from lxml.etree import HTMLParser
 from lxml.html import fromstring
+
+from blox import shpaml
+from blox.all import factory
+from blox.attributes import AccessorAttribute
+from blox.base import Wildcard
+from blox.containers import Container
+from blox.text import Text
 
 try:
     import Cython
