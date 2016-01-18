@@ -52,7 +52,7 @@ class Blox(list):
         if type(index) in (int, slice):
             return self[index] if (self and index > 0 and index < len(self)) else default
 
-        return self[0][index] if self else None
+        return self[0].get(index, default) if self else default
 
     def output(self, to=None, *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''

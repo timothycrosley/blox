@@ -38,6 +38,7 @@ except ImportError:
 
 SCRIPT_TEMPLATE = """# WARNING: DON'T EDIT AUTO-GENERATED
 
+from blox.base import Blox
 from blox.containers import Container
 from blox.text import Text, UnsafeText
 from blox.attributes import AccessorAttribute
@@ -91,7 +92,7 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
 
     matches = {}
     for accessor, query in queries.items():
-        lines.append('template.{0} = []'.format(accessor))
+        lines.append('template.{0} = Blox()'.format(accessor))
         for match in dom.cssselect(query):
             matches[match] = accessor
 
