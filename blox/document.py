@@ -20,11 +20,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 '''
 from blox.attributes import (AbstractAttribute, Attribute, BlokAttribute, BooleanAttribute,
-                             IntegerAttribute, NestedAttribute, RenderedDirect, SetAttribute)
+                             IntegerAttribute, NestedAttribute, RenderedDirect, SetAttribute,
+                             NestedBlokAttribute)
 from blox.base import Blok, NamedTag, Tag, TagWithChildren
 from blox.containers import Container
 from blox.builder import Factory
-from blox.dom import HTML, DocType
+from blox.dom import HTML, DocType, Head, Body
 
 factory = Factory("Document")
 
@@ -35,9 +36,9 @@ class Document(Container):
     __slots__ = ()
     doc_type = BlokAttribute(DocType, init=True, position=0)
     html = BlokAttribute(HTML, position=1, init=True)
-    head = NestedAttribute('html.head')
+    head = NestedBlokAttribute('html.head', Head)
     title = NestedAttribute('html.head.title.text')
-    body = NestedAttribute('html.body')
+    body = NestedBlokAttribute('html.body', Body)
 
     @property
     def blox_container(self):

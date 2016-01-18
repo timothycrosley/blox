@@ -57,6 +57,15 @@ class NestedAttribute(AbstractAttribute):
         return setattr(current_obj, self.attribute[-1], value)
 
 
+class NestedBlokAttribute(NestedAttribute):
+    '''Defines a reference to a nested attribute that is known to be representing a Blok type'''
+    __slots__ = ('type', )
+
+    def __init__(self, attribute, type, signal=False, doc="", name=None):
+        super().__init__(attribute=attribute, signal=signal, doc=doc, name=name)
+        self.type = type
+
+
 class DirectAttribute(AbstractAttribute):
     '''Defines an attribute that is responsible for its own rendering, and modifies object attribute'''
     __slots__ = ('object_attribute', 'type')
@@ -75,6 +84,8 @@ class DirectAttribute(AbstractAttribute):
         return self.type(value)
 
     def __set__(self, obj, value):
+        if type(value) == str:
+            value = self.from_string(value)
         return setattr(obj, self.object_attribute, value)
 
     def __delete__(self, obj):
@@ -110,6 +121,9 @@ class ListAttribute(RenderedDirect):
 
     def render_value(self, obj):
         return " ".join(str(value) for value in getattr(obj, self.object_attribute))
+
+    def from_string(self, value):
+        return self.type((value, ))
 
 
 class SetAttribute(ListAttribute):

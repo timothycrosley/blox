@@ -26,7 +26,7 @@ from itertools import chain
 from connectable import Connectable
 from blox.attributes import (AbstractAttribute, Attribute, RenderedDirect, SetAttribute,
                              BooleanAttribute, IntegerAttribute, DirectAttribute, BlokAttribute,
-                             AccessorAttribute)
+                             AccessorAttribute, NestedBlokAttribute)
 
 from io import StringIO
 
@@ -106,8 +106,8 @@ class TagAttributes(type):
                         attribute.object_attribute = '_{0}'.format(attribute_name)
                     if getattr(attribute, 'init', False):
                         init_attributes.append(attribute_name)
-                    if isinstance(attribute, BlokAttribute) and hasattr(attribute.type, 'tag'):
-                        blok_attributes[attribute.type.tag] = attribute
+                if isinstance(attribute, (BlokAttribute, NestedBlokAttribute)) and hasattr(attribute.type, 'tag'):
+                    blok_attributes[attribute.type.tag] = attribute
                 if isinstance(attribute, AccessorAttribute):
                     accessor_attributes.append(attribute)
                     if not hasattr(attribute, 'parent_attribute'):
