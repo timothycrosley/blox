@@ -141,7 +141,7 @@ class TagAttributes(type):
                     full_attribute_map = dict(parents[0].attribute_map)
                     full_attribute_map.update(attribute_map)
                     attribute_map = full_attribute_map
-                class_dict['attribute_map'] = full_attributes
+                class_dict['attribute_map'] = attribute_map
 
             class_dict['attribute_descriptors'] = attributes
             attribute_signals = (attribute.signal for attribute in attributes.values() if getattr(attribute, 'signal'))
