@@ -58,6 +58,7 @@ class Blox(list):
         '''Outputs to a stream (like a file or request)'''
         for blok in self:
             blok.output(to, *args, **kwargs)
+        return self
 
     def render(self, *args, **kwargs):
         '''Renders as a str'''
@@ -74,6 +75,47 @@ class Blox(list):
     def __setattr__(self, attribute, value):
         for blok in self:
             setattr(self, attribute, value)
+
+    def first(self):
+        return self.__class__((self[:1], ))
+
+    def last(self):
+        return self.__class__((self[-1:], ))
+
+    def __call__(self, *blox, position=None):
+        for blok in self:
+            if callable(blok):
+                blok(*blox, position=None)
+        return self
+
+    def filter(self, **attributes):
+        return self.__class__((blok for blok in self if self._matches(blok, **attributes)))
+
+    def _matches(self, blok, **attributes):
+        for attribute, expected_value in attributes.items():
+            if type(expected_value) in (list, tuple):
+                check_in = getattr(blok, attribute, ())
+                for value in expected_value:
+                    if not value in check_in:
+                        return False
+
+            elif getattr(blok, attribute, None) != expected_value:
+                return False
+
+        return True
+
+    def walk(self):
+        for blok in self:
+            yield blok
+            if hasattr(blok, '_blox'):
+                for item in blok.blox.walk():
+                    yield item
+
+    def all(self):
+        return self.__class__(self.walk())
+
+    def query(self, **attributes):
+        return self.__class__((blok for blok in self.walk() if self._matches(blok, **attributes)))
 
 
 class TagAttributes(type):
