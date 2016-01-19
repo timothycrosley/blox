@@ -99,7 +99,7 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
             matches[match] = accessor
 
     def compile_node(node, parent='template'):
-        if node in ignored:
+        if node in ignored or type(node.tag) != str:
             return
 
         blok_name, blok = increment(node.tag)
@@ -112,15 +112,16 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
         text = (node.text or "").strip().replace('"', '\\"')
         if text:
             if 'text' in dir(blok):
-                lines.append('{0}.text = "{1}"'.format(blok_name, text))
+                lines.append('{0}.text = """{1}"""'.format(blok_name, text))
             else:
-                lines.append('{0}(Text("{1}"))'.format(blok_name, text))
+                lines.append('{0}(Text("""{1}"""))'.format(blok_name, text))
 
         if 'id' in node.keys() and not 'accessor' in node.keys():
             node.set('accessor', node.get('id'))
         for attribute_name, attribute_value in node.items():
             attribute_name = getattr(blok, 'attribute_map', {}).get(attribute_name, attribute_name)
             if attribute_name == 'accessor':
+                attribute_value = attribute_value.replace('-', '_')
                 attributes.append("{0} = AccessorAttribute(Text)".format(attribute_value))
                 lines.append('template._{0}_parent = {1}'.format(attribute_value, parent))
                 lines.append('template.{0} = {1}'.format(attribute_value, blok_name))
@@ -136,19 +137,19 @@ def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **
                 attached_text = (child_node.text or "").strip().replace('"', '\\"')
                 if attached_text:
                     if 'text' in dir(blok.blok_attributes[child_node.tag].type):
-                        lines.append('{0}.text = "{1}"'.format(attached_child, attached_text))
+                        lines.append('{0}.text = """{1}"""'.format(attached_child, attached_text))
                     else:
-                        lines.append('{0}(Text("{1}"))'.format(attached_child, attached_text))
+                        lines.append('{0}(Text("""{1}"""))'.format(attached_child, attached_text))
             else:
                 compile_node(child_node, parent=blok_name)
 
             tail = (child_node.tail or "").strip().replace('"', '\\"')
             if tail:
-                lines.append('{0}(Text("{1}"))'.format(blok_name, tail))
+                lines.append('{0}(Text("""{1}"""))'.format(blok_name, tail))
     compile_node(dom)
     return SCRIPT_TEMPLATE.format(accessors=json.dumps(accessors),
-                                  attributes="\n{indent}".join(attributes).format(indent=indent),
-                                  build_steps="\n{indent}".join(lines).format(indent=indent),
+                                  attributes="\n{indent}".join(attributes).replace("{indent}", indent),
+                                  build_steps="\n{indent}".join(lines).replace("{indent}", indent),
                                   indent=indent)
 
 
