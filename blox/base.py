@@ -431,7 +431,8 @@ class TagWithChildren(Container, AbstractTag):
         super().__init__()
         for blok in blox:
             self(blok)
-        self.attributes.update(attributes)
+        for name, value in attributes.items():
+            setattr(self, name, value)
 
     def output(self, to=None, formatted=False, indent=0, indentation='  ', *args, **kwargs):
         '''Outputs to a stream (like a file or request)'''
