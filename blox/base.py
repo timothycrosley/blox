@@ -88,6 +88,18 @@ class Blox(list):
                 blok(*blox, position=None)
         return self
 
+    def add_class(self, class_name):
+        for blok in self:
+            if hasattr(blok, 'classes'):
+                blok.classes.add(class_name)
+        return self
+
+    def remove_class(self, class_name):
+        for blok in self:
+            if hasattr(blok, 'classes'):
+                blok.classes.discard(class_name)
+        return self
+
     def filter(self, **attributes):
         return self.__class__((blok for blok in self if self._matches(blok, **attributes)))
 
