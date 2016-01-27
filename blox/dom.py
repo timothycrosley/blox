@@ -570,6 +570,7 @@ class Label(TagWithChildren):
     tag = "label"
     for_ = RenderedDirect(name="for")
     form = Attribute()
+    text = TextAttribute(Text)
 
 
 @factory.add()
