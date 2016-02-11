@@ -24,6 +24,7 @@ import re
 from itertools import chain
 
 from connectable import Connectable
+from connectable.base import CombineSignals
 from blox.attributes import (AbstractAttribute, Attribute, RenderedDirect, SetAttribute,
                              BooleanAttribute, IntegerAttribute, DirectAttribute, BlokAttribute,
                              AccessorAttribute, NestedBlokAttribute)
@@ -130,7 +131,7 @@ class Blox(list):
         return self.__class__((blok for blok in self.walk() if self._matches(blok, **attributes)))
 
 
-class TagAttributes(type):
+class TagAttributes(CombineSignals):
     '''A meta class to automatically register signals for tag attributes'''
 
     def __new__(metaclass, name, parents, class_dict, *kargs, **kwargs):
