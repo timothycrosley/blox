@@ -61,7 +61,7 @@ def build(factory):
 def string(html, start_on=None, ignore=(), use_shpaml=True, **queries):
     '''Returns a blox template from an html string'''
     if use_shpaml:
-        shpaml.convert_text(html)
+        html = shpaml.convert_text(html)
     return _to_template(fromstring(html), start_on=start_on,
                         ignore=ignore, **queries)
 
