@@ -58,21 +58,23 @@ def build(factory):
 """
 
 
-def string(html, start_on=None, ignore=(), **queries):
+def string(html, start_on=None, ignore=(), use_shpaml=True, **queries):
     '''Returns a blox template from an html string'''
-    return _to_template(fromstring(shpaml.convert_text(html)), start_on=start_on,
+    if use_shpaml:
+        shpaml.convert_text(html)
+    return _to_template(fromstring(html), start_on=start_on,
                         ignore=ignore, **queries)
 
 
-def file(file_object, start_on=None, ignore=(), **queries):
+def file(file_object, start_on=None, ignore=(), use_shpaml=True, **queries):
     '''Returns a blox template from a file stream object'''
-    return string(file_object.read(), start_on=start_on, ignore=ignore, **queries)
+    return string(file_object.read(), start_on=start_on, ignore=ignore, use_shpaml=use_shpaml, **queries)
 
 
-def filename(file_name, start_on=None, ignore=(), **queries):
+def filename(file_name, start_on=None, ignore=(), use_shpaml=True, **queries):
     '''Returns a blox template from a valid file path'''
     with open(file_name) as template_file:
-        return file(template_file, start_on=start_on, ignore=ignore, **queries)
+        return file(template_file, start_on=start_on, ignore=ignore, use_shpaml=use_shpaml, **queries)
 
 
 def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **queries):
