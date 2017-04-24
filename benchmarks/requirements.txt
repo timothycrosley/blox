@@ -1,5 +1,5 @@
 blox
 django
 jinja2
-lxml>=3.0.0
+lxml==3.7.3
 cssselect>=0.9.1
