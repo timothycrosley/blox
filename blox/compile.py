@@ -26,7 +26,7 @@ from xml.dom import minidom
 from lxml.etree import HTMLParser
 from lxml.html import fromstring
 
-from blox import shpaml
+from short.compile import text as grow_short
 from blox.all import factory
 from blox.attributes import AccessorAttribute
 from blox.base import Wildcard
@@ -58,23 +58,23 @@ def build(factory):
 """
 
 
-def string(html, start_on=None, ignore=(), use_shpaml=True, **queries):
+def string(html, start_on=None, ignore=(), use_short=True, **queries):
     '''Returns a blox template from an html string'''
-    if use_shpaml:
-        html = shpaml.convert_text(html)
+    if use_short:
+        html = grow_short(html)
     return _to_template(fromstring(html), start_on=start_on,
                         ignore=ignore, **queries)
 
 
-def file(file_object, start_on=None, ignore=(), use_shpaml=True, **queries):
+def file(file_object, start_on=None, ignore=(), use_short=True, **queries):
     '''Returns a blox template from a file stream object'''
-    return string(file_object.read(), start_on=start_on, ignore=ignore, use_shpaml=use_shpaml, **queries)
+    return string(file_object.read(), start_on=start_on, ignore=ignore, use_short=use_short, **queries)
 
 
-def filename(file_name, start_on=None, ignore=(), use_shpaml=True, **queries):
+def filename(file_name, start_on=None, ignore=(), use_short=True, **queries):
     '''Returns a blox template from a valid file path'''
     with open(file_name) as template_file:
-        return file(template_file, start_on=start_on, ignore=ignore, use_shpaml=use_shpaml, **queries)
+        return file(template_file, start_on=start_on, ignore=ignore, use_short=use_short, **queries)
 
 
 def _to_python(dom, factory=factory, indent='    ', start_on=None, ignore=(), **queries):
