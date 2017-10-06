@@ -1,4 +1,5 @@
-![blox](https://raw.github.com/timothycrosley/blox/develop/logo.png)
+# ![blox](https://raw.github.com/timothycrosley/blox/develop/logo.png)
+Blox
 ===================
 
 [![PyPI version](https://badge.fury.io/py/blox.svg)](http://badge.fury.io/py/blox)
